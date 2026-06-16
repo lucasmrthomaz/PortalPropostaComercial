@@ -1,0 +1,286 @@
+<div class="settings-header">
+  <h1>Configurações do Portal</h1>
+  <p>Gerencie todos os módulos do sistema: parâmetros operacionais, usuários, perfis de acesso e tipos de proposta.</p>
+</div>
+
+<div *ngIf="loading()" class="spinner-container">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<div *ngIf="!loading()" class="settings-content">
+
+  <!-- ======================== -->
+  <!-- PARÂMETROS OPERACIONAIS  -->
+  <!-- ======================== -->
+  <div class="section-label">
+    <mat-icon>tune</mat-icon>
+    <span>Parâmetros Operacionais</span>
+  </div>
+
+  <mat-card class="settings-card mat-elevation-z2">
+    <mat-card-content>
+      <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="form-container">
+
+        <div class="setting-item">
+          <div class="setting-desc">
+            <h3>Taxa de Corretagem Global (%)</h3>
+            <p>Porcentagem padrão de comissão sobre propostas fechadas com sucesso por empresas parceiras.</p>
+          </div>
+          <mat-form-field appearance="outline" class="setting-input">
+            <mat-label>Taxa (%)</mat-label>
+            <input matInput type="number" formControlName="taxa_corretagem" placeholder="5.0" step="0.1" min="0" max="100">
+            <span matSuffix>%</span>
+            <mat-error *ngIf="settingsForm.get('taxa_corretagem')?.hasError('required')">A taxa é obrigatória</mat-error>
+            <mat-error *ngIf="settingsForm.get('taxa_corretagem')?.hasError('min')">A taxa não pode ser negativa</mat-error>
+            <mat-error *ngIf="settingsForm.get('taxa_corretagem')?.hasError('max')">A taxa máxima é 100%</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="divider-actions"></div>
+
+        <div class="setting-item">
+          <div class="setting-desc">
+            <h3>Senha do Supervisor</h3>
+            <p>Senha para aprovação de ações críticas, como exclusão de clientes e aprovação direta de propostas.</p>
+          </div>
+          <mat-form-field appearance="outline" class="setting-input">
+            <mat-label>Nova Senha</mat-label>
+            <input matInput type="password" formControlName="senha_supervisor" placeholder="Deixe em branco para não alterar">
+            <mat-icon matPrefix>lock</mat-icon>
+            <mat-error *ngIf="settingsForm.get('senha_supervisor')?.hasError('minlength')">Mínimo 4 caracteres</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="settingsForm.invalid || loading()">
+            <mat-icon>save</mat-icon>
+            Salvar Configurações
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ======================== -->
+  <!-- TIPOS DE PROPOSTA        -->
+  <!-- ======================== -->
+  <div class="section-label">
+    <mat-icon>description</mat-icon>
+    <span>Tipos de Proposta</span>
+  </div>
+
+  <mat-card class="settings-card mat-elevation-z2">
+    <mat-card-content>
+      <div class="card-header-with-action">
+        <div>
+          <h2>Tipos de Proposta</h2>
+          <p>Configure e crie tipos de proposta comercial e gerencie seus campos dinâmicos.</p>
+        </div>
+        <button mat-raised-button color="primary" type="button" (click)="openProposalTypeDialog()">
+          <mat-icon>add</mat-icon> Criar Novo Tipo
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table mat-table [dataSource]="proposalTypes()" class="crud-table">
+
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let element">
+              <strong>{{ element.nome }}</strong>
+              <span class="system-badge" *ngIf="element.chave === 'Imobiliaria' || element.chave === 'Auto' || element.chave === 'CompraVenda'">
+                Sistema
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="chave">
+            <th mat-header-cell *matHeaderCellDef>Chave (ID)</th>
+            <td mat-cell *matCellDef="let element"><code>{{ element.chave }}</code></td>
+          </ng-container>
+
+          <ng-container matColumnDef="campos">
+            <th mat-header-cell *matHeaderCellDef>Campos Customizados</th>
+            <td mat-cell *matCellDef="let element" class="fields-cell">
+              {{ getFieldNamesList(element) }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Ações</th>
+            <td mat-cell *matCellDef="let element" class="actions-cell">
+              <button mat-icon-button color="primary" (click)="openProposalTypeDialog(element)" matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteProposalType(element)"
+                      [disabled]="element.chave === 'Imobiliaria' || element.chave === 'Auto' || element.chave === 'CompraVenda'"
+                      matTooltip="Excluir">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsTypes"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsTypes;"></tr>
+        </table>
+        <div class="no-data-placeholder" *ngIf="proposalTypes().length === 0">
+          <mat-icon>inbox</mat-icon>
+          <p>Nenhum tipo de proposta cadastrado.</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ======================== -->
+  <!-- PERFIS DE ACESSO         -->
+  <!-- ======================== -->
+  <div class="section-label">
+    <mat-icon>security</mat-icon>
+    <span>Perfis de Acesso</span>
+  </div>
+
+  <mat-card class="settings-card mat-elevation-z2">
+    <mat-card-content>
+      <div class="card-header-with-action">
+        <div>
+          <h2>Perfis de Acesso</h2>
+          <p>Crie e configure perfis de acesso com permissões granulares para cada módulo do sistema.</p>
+        </div>
+        <button mat-raised-button color="primary" type="button" (click)="openProfileDialog()">
+          <mat-icon>add</mat-icon> Criar Novo Perfil
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table mat-table [dataSource]="perfis()" class="crud-table">
+
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let element">
+              <strong>{{ element.nome }}</strong>
+              <span class="system-badge" *ngIf="element.is_sistema">Sistema</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="descricao">
+            <th mat-header-cell *matHeaderCellDef>Descrição</th>
+            <td mat-cell *matCellDef="let element" class="fields-cell">
+              {{ element.descricao || '—' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="permissoes">
+            <th mat-header-cell *matHeaderCellDef>Permissões</th>
+            <td mat-cell *matCellDef="let element">
+              <span class="perm-summary" [class.full-access]="getPermissoesList(element).includes('Total')">
+                {{ getPermissoesList(element) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Ações</th>
+            <td mat-cell *matCellDef="let element" class="actions-cell">
+              <button mat-icon-button color="primary" (click)="openProfileDialog(element)" matTooltip="Editar perfil">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deletePerfil(element)"
+                      [disabled]="element.is_sistema" matTooltip="Excluir perfil">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsPerfis"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsPerfis;"></tr>
+        </table>
+        <div class="no-data-placeholder" *ngIf="perfis().length === 0">
+          <mat-icon>inbox</mat-icon>
+          <p>Nenhum perfil de acesso cadastrado.</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ======================== -->
+  <!-- USUÁRIOS                 -->
+  <!-- ======================== -->
+  <div class="section-label">
+    <mat-icon>group</mat-icon>
+    <span>Usuários</span>
+  </div>
+
+  <mat-card class="settings-card mat-elevation-z2">
+    <mat-card-content>
+      <div class="card-header-with-action">
+        <div>
+          <h2>Usuários</h2>
+          <p>Gerencie os usuários do sistema e seus perfis de acesso. O Super Admin possui poder CRUD irrestrito.</p>
+        </div>
+        <button mat-raised-button color="primary" type="button" (click)="openUserDialog()">
+          <mat-icon>person_add</mat-icon> Novo Usuário
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table mat-table [dataSource]="usuarios()" class="crud-table">
+
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="user-name-cell">
+                <div class="user-avatar">{{ element.nome.charAt(0).toUpperCase() }}</div>
+                <strong>{{ element.nome }}</strong>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>E-mail</th>
+            <td mat-cell *matCellDef="let element" class="email-cell">{{ element.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="perfil">
+            <th mat-header-cell *matHeaderCellDef>Perfil</th>
+            <td mat-cell *matCellDef="let element">
+              <span class="perfil-chip" [class.super-admin]="element.perfil?.nome === 'Super Admin'">
+                <mat-icon *ngIf="element.perfil?.nome === 'Super Admin'">star</mat-icon>
+                {{ element.perfil?.nome || element.perfil_id }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let element">
+              <span class="status-badge" [class.active]="element.ativo" [class.inactive]="!element.ativo">
+                <mat-icon>{{ element.ativo ? 'check_circle' : 'cancel' }}</mat-icon>
+                {{ element.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Ações</th>
+            <td mat-cell *matCellDef="let element" class="actions-cell">
+              <button mat-icon-button color="primary" (click)="openUserDialog(element)" matTooltip="Editar usuário">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteUsuario(element)" matTooltip="Excluir usuário">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsUsuarios"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsUsuarios;"></tr>
+        </table>
+        <div class="no-data-placeholder" *ngIf="usuarios().length === 0">
+          <mat-icon>group_off</mat-icon>
+          <p>Nenhum usuário cadastrado.</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

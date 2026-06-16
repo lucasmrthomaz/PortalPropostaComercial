@@ -1,0 +1,188 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Proposta' : 'Nova Proposta' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="proposalForm" (ngSubmit)="onSubmit()" class="form-container">
+    
+    <!-- Cliente Field -->
+    <mat-form-field appearance="outline" class="full-width" *ngIf="!presetClientId">
+      <mat-label>Cliente</mat-label>
+      <mat-select formControlName="cliente_id">
+        <mat-option *ngFor="let client of clients" [value]="client.id">
+          {{ client.nome }} ({{ client.cpf_cnpj }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="proposalForm.get('cliente_id')?.hasError('required')">Selecione um cliente</mat-error>
+    </mat-form-field>
+    
+    <div *ngIf="presetClientId" class="preset-client-info">
+      <strong>Cliente:</strong> {{ presetClientName }}
+    </div>
+
+    <div class="row">
+      <!-- Tipo Field -->
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Tipo de Proposta</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option *ngFor="let type of proposalTypes" [value]="type.chave">
+            {{ type.nome }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="proposalForm.get('tipo')?.hasError('required')">Selecione o tipo de proposta</mat-error>
+      </mat-form-field>
+
+      <!-- Status Field -->
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="Pendente">Pendente</mat-option>
+          <mat-option value="Em Analise">Em Análise</mat-option>
+          <mat-option value="Aprovada">Aprovada</mat-option>
+          <mat-option value="Recusada">Recusada</mat-option>
+        </mat-select>
+        <mat-error *ngIf="proposalForm.get('status')?.hasError('required')">Selecione o status</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Valor Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Valor (R$)</mat-label>
+      <input matInput type="number" formControlName="valor" placeholder="0.00" step="0.01">
+      <mat-error *ngIf="proposalForm.get('valor')?.hasError('required')">O valor é obrigatório</mat-error>
+      <mat-error *ngIf="proposalForm.get('valor')?.hasError('min')">O valor deve ser maior que zero</mat-error>
+    </mat-form-field>
+
+    <!-- Descricao Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descrição geral da proposta</mat-label>
+      <textarea matInput formControlName="descricao" placeholder="Escreva observações gerais..." rows="2"></textarea>
+    </mat-form-field>
+
+    <!-- Dynamic Specific Fields -->
+    <div formGroupName="dados_especificos" class="specific-fields-container">
+      
+      <!-- Imobiliaria Fields -->
+      <div *ngIf="proposalForm.get('tipo')?.value === 'Imobiliaria'" class="type-section">
+        <h3>Detalhes da Proposta Imobiliária</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Endereço Completo do Imóvel</mat-label>
+          <input matInput formControlName="endereco_imovel" placeholder="Rua, Número, Bairro, Cidade - UF">
+          <mat-error *ngIf="proposalForm.get('dados_especificos.endereco_imovel')?.hasError('required')">O endereço é obrigatório</mat-error>
+        </mat-form-field>
+
+        <div class="row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Tipo do Imóvel</mat-label>
+            <mat-select formControlName="tipo_imovel">
+              <mat-option value="Casa">Casa</mat-option>
+              <mat-option value="Apartamento">Apartamento</mat-option>
+              <mat-option value="Comercial">Comercial</mat-option>
+              <mat-option value="Terreno">Terreno</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Área Privativa (m²)</mat-label>
+            <input matInput type="number" formControlName="area_m2" placeholder="0">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.area_m2')?.hasError('required')">A área é obrigatória</mat-error>
+            <mat-error *ngIf="proposalForm.get('dados_especificos.area_m2')?.hasError('min')">A área deve ser maior que zero</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Auto Fields -->
+      <div *ngIf="proposalForm.get('tipo')?.value === 'Auto'" class="type-section">
+        <h3>Detalhes do Veículo</h3>
+        <div class="row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Marca</mat-label>
+            <input matInput formControlName="marca" placeholder="Ex: Chevrolet">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.marca')?.hasError('required')">A marca é obrigatória</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Modelo</mat-label>
+            <input matInput formControlName="modelo" placeholder="Ex: Onix">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.modelo')?.hasError('required')">O modelo é obrigatório</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Ano de Fabricação</mat-label>
+            <input matInput type="number" formControlName="ano" placeholder="Ex: 2022">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.ano')?.hasError('required')">O ano é obrigatório</mat-error>
+            <mat-error *ngIf="proposalForm.get('dados_especificos.ano')?.hasError('min')">O ano informado é inválido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Placa do Veículo</mat-label>
+            <input matInput formControlName="placa" placeholder="Ex: ABC-1234 ou ABC1D23">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.placa')?.hasError('required')">A placa é obrigatória</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Compra/Venda Fields -->
+      <div *ngIf="proposalForm.get('tipo')?.value === 'CompraVenda'" class="type-section">
+        <h3>Detalhes da Compra / Venda Diversas</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição dos Itens / Serviços</mat-label>
+          <textarea matInput formControlName="itens" placeholder="Liste detalhadamente os itens que compõem a negociação..." rows="2"></textarea>
+          <mat-error *ngIf="proposalForm.get('dados_especificos.itens')?.hasError('required')">A lista de itens é obrigatória</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Condições de Pagamento</mat-label>
+          <input matInput formControlName="condicoes_pagamento" placeholder="Ex: Entrada de 50% + 3x no cartão de crédito">
+          <mat-error *ngIf="proposalForm.get('dados_especificos.condicoes_pagamento')?.hasError('required')">As condições de pagamento são obrigatórias</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Dynamic Fields -->
+      <div *ngIf="isDynamicType(proposalForm.get('tipo')?.value)" class="type-section">
+        <h3>Detalhes de {{ getSelectedTypeLabel() }}</h3>
+        
+        <div *ngFor="let campo of getSelectedTypeFields()" [ngSwitch]="campo.tipo">
+          
+          <!-- Text field -->
+          <mat-form-field appearance="outline" class="full-width" *ngSwitchCase="'text'">
+            <mat-label>{{ campo.nome }}</mat-label>
+            <input matInput [formControlName]="campo.chave" [placeholder]="campo.nome">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.' + campo.chave)?.hasError('required')">
+              Este campo é obrigatório
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Number field -->
+          <mat-form-field appearance="outline" class="full-width" *ngSwitchCase="'number'">
+            <mat-label>{{ campo.nome }}</mat-label>
+            <input matInput type="number" [formControlName]="campo.chave" [placeholder]="campo.nome">
+            <mat-error *ngIf="proposalForm.get('dados_especificos.' + campo.chave)?.hasError('required')">
+              Este campo é obrigatório
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Boolean select -->
+          <mat-form-field appearance="outline" class="full-width" *ngSwitchCase="'boolean'">
+            <mat-label>{{ campo.nome }}</mat-label>
+            <mat-select [formControlName]="campo.chave">
+              <mat-option [value]="true">Sim</mat-option>
+              <mat-option [value]="false">Não</mat-option>
+            </mat-select>
+            <mat-error *ngIf="proposalForm.get('dados_especificos.' + campo.chave)?.hasError('required')">
+              Este campo é obrigatório
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="proposalForm.invalid" (click)="onSubmit()">
+    {{ isEditMode ? 'Salvar' : 'Criar' }}
+  </button>
+</mat-dialog-actions>

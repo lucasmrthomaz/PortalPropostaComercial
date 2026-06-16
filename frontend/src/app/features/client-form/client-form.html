@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Cliente' : 'Novo Cliente' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="form-container">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nome Completo / Razão Social</mat-label>
+      <input matInput formControlName="nome" placeholder="Ex: João da Silva">
+      <mat-error *ngIf="clientForm.get('nome')?.hasError('required')">O nome é obrigatório</mat-error>
+      <mat-error *ngIf="clientForm.get('nome')?.hasError('minlength')">O nome deve ter no mínimo 3 caracteres</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>CPF / CNPJ</mat-label>
+      <input matInput formControlName="cpf_cnpj" placeholder="Apenas números">
+      <mat-error *ngIf="clientForm.get('cpf_cnpj')?.hasError('required')">CPF/CNPJ é obrigatório</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>E-mail</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="Ex: joao@email.com">
+      <mat-error *ngIf="clientForm.get('email')?.hasError('required')">O e-mail é obrigatório</mat-error>
+      <mat-error *ngIf="clientForm.get('email')?.hasError('email')">Informe um e-mail válido</mat-error>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Telefone</mat-label>
+        <input matInput formControlName="telefone" placeholder="Ex: (11) 99999-9999">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Endereço</mat-label>
+        <input matInput formControlName="endereco" placeholder="Ex: Av. Paulista, 1000">
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="clientForm.invalid" (click)="onSubmit()">
+    {{ isEditMode ? 'Salvar' : 'Cadastrar' }}
+  </button>
+</mat-dialog-actions>

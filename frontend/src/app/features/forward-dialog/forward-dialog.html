@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Encaminhar Proposta</h2>
+<mat-dialog-content class="dialog-content">
+  <p>Selecione a empresa parceira para a qual deseja encaminhar esta proposta:</p>
+  <mat-form-field appearance="outline" class="select-field">
+    <mat-label>Empresa Parceira</mat-label>
+    <mat-select [(value)]="selectedCompanyId">
+      <mat-option *ngFor="let c of companies" [value]="c.id">
+        {{ c.nome }} (Resp: {{ c.responsavel_nome }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="!selectedCompanyId" [mat-dialog-close]="selectedCompanyId">
+    Avançar
+  </button>
+</mat-dialog-actions>

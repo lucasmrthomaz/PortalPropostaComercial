@@ -1,0 +1,106 @@
+.list-header {
+  margin-bottom: 24px;
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 4px 0;
+  }
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.table-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+  
+  mat-card-content {
+    padding: 24px !important;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.mat-mdc-cell {
+  color: #555;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  
+  &.pendente {
+    background-color: #fff3e0;
+    color: #fb8c00;
+  }
+  &.aprovado {
+    background-color: #e8f5e9;
+    color: #43a047;
+  }
+  &.recusado {
+    background-color: #ffebee;
+    color: #e53935;
+  }
+}
+
+.actions-header {
+  text-align: right;
+  width: 250px;
+}
+
+.processed-text {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+  padding-right: 12px;
+}
+
+.decision-btn {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  height: 36px !important;
+  padding: 0 12px !important;
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+  
+  &.approve {
+    background-color: #4caf50 !important;
+    color: #fff !important;
+  }
+  
+  &.reject {
+    background-color: #f44336 !important;
+    color: #fff !important;
+  }
+}

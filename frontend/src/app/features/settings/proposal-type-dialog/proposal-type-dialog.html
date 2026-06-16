@@ -1,0 +1,100 @@
+<h2 mat-dialog-title class="dialog-header">
+  <mat-icon>settings_suggest</mat-icon>
+  {{ isEditMode ? 'Editar Tipo de Proposta' : 'Novo Tipo de Proposta' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="typeForm" (ngSubmit)="onSubmit()" class="form-container">
+    
+    <!-- Informações Básicas -->
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Nome do Tipo</mat-label>
+        <input matInput formControlName="nome" placeholder="Ex: Plano de Saúde">
+        <mat-error *ngIf="typeForm.get('nome')?.hasError('required')">Nome é obrigatório</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Chave do Tipo (ID)</mat-label>
+        <input matInput formControlName="chave" placeholder="Ex: PlanoSaude">
+        <mat-hint *ngIf="!isEditMode">Use apenas letras e números, sem espaços</mat-hint>
+        <mat-error *ngIf="typeForm.get('chave')?.hasError('required')">Chave é obrigatória</mat-error>
+        <mat-error *ngIf="typeForm.get('chave')?.hasError('pattern')">Use apenas letras e números</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Campos Customizados -->
+    <div class="fields-section">
+      <div class="fields-header">
+        <h3>Campos do Formulário</h3>
+        <button type="button" mat-stroked-button color="primary" (click)="addField()" *ngIf="!isLegacy">
+          <mat-icon>add</mat-icon> Adicionar Campo
+        </button>
+      </div>
+
+      <p class="legacy-warning" *ngIf="isLegacy">
+        <mat-icon>lock</mat-icon> Os campos deste tipo de proposta do sistema não podem ser alterados.
+      </p>
+
+      <div *ngIf="campos.length === 0" class="no-fields-placeholder">
+        <mat-icon>info</mat-icon>
+        <p>Nenhum campo customizado adicionado. Adicione pelo menos um campo para capturar informações específicas desta proposta.</p>
+      </div>
+
+      <!-- Formulários de Campos (FormArray) -->
+      <div formArrayName="campos" class="fields-list">
+        <div *ngFor="let campo of campos.controls; let i = index" [formGroupName]="i" class="field-item-row">
+          
+          <!-- Nome / Label -->
+          <mat-form-field appearance="outline" class="field-name-input">
+            <mat-label>Nome do Campo (Label)</mat-label>
+            <input matInput formControlName="nome" placeholder="Ex: Nome da Operadora">
+            <mat-error *ngIf="campo.get('nome')?.hasError('required')">Obrigatório</mat-error>
+          </mat-form-field>
+
+          <!-- Chave / DB Identifier -->
+          <mat-form-field appearance="outline" class="field-key-input">
+            <mat-label>Chave do Campo</mat-label>
+            <input matInput formControlName="chave" placeholder="Ex: nome_operadora">
+            <mat-error *ngIf="campo.get('chave')?.hasError('required')">Obrigatório</mat-error>
+            <mat-error *ngIf="campo.get('chave')?.hasError('pattern')">Minúsculas, números e _</mat-error>
+          </mat-form-field>
+
+          <!-- Tipo -->
+          <mat-form-field appearance="outline" class="field-type-input">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo">
+              <mat-option value="text">Texto</mat-option>
+              <mat-option value="number">Número</mat-option>
+              <mat-option value="boolean">Sim / Não (Boolean)</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Obrigatório -->
+          <mat-form-field appearance="outline" class="field-required-input">
+            <mat-label>Obrigatório</mat-label>
+            <mat-select formControlName="obrigatorio">
+              <mat-option [value]="true">Sim</mat-option>
+              <mat-option [value]="false">Não</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Deletar Campo -->
+          <button type="button" mat-icon-button color="warn" class="delete-field-btn" (click)="removeField(i)" *ngIf="!isLegacy">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="typeForm.invalid" (click)="onSubmit()">
+    {{ isEditMode ? 'Salvar Alterações' : 'Criar Tipo' }}
+  </button>
+</mat-dialog-actions>

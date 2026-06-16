@@ -1,0 +1,72 @@
+<div class="dialog-header">
+  <h2 mat-dialog-title>
+    <mat-icon>{{ isEditMode ? 'manage_accounts' : 'person_add' }}</mat-icon>
+    {{ isEditMode ? 'Editar Usuário' : 'Novo Usuário' }}
+  </h2>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" id="userForm" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nome completo</mat-label>
+      <input matInput formControlName="nome" placeholder="João da Silva">
+      <mat-icon matPrefix>person</mat-icon>
+      <mat-error *ngIf="form.get('nome')?.hasError('required')">Nome é obrigatório</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>E-mail</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="joao@empresa.com">
+      <mat-icon matPrefix>email</mat-icon>
+      <mat-error *ngIf="form.get('email')?.hasError('required')">E-mail é obrigatório</mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">E-mail inválido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Perfil de Acesso</mat-label>
+      <mat-select formControlName="perfil_id">
+        <mat-option *ngFor="let p of data.perfis" [value]="p.id">
+          <div class="perfil-option">
+            <span>{{ p.nome }}</span>
+            <span class="perfil-desc" *ngIf="p.descricao">{{ p.descricao }}</span>
+          </div>
+        </mat-option>
+      </mat-select>
+      <mat-icon matPrefix>shield</mat-icon>
+      <mat-error *ngIf="form.get('perfil_id')?.hasError('required')">Selecione um perfil</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ isEditMode ? 'Nova Senha (deixe em branco para não alterar)' : 'Senha' }}</mat-label>
+      <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="senha"
+             [placeholder]="isEditMode ? 'Deixe em branco para não alterar' : 'Mínimo 6 caracteres'">
+      <mat-icon matPrefix>lock</mat-icon>
+      <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+        <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="form.get('senha')?.hasError('required')">Senha é obrigatória</mat-error>
+      <mat-error *ngIf="form.get('senha')?.hasError('minlength')">Mínimo 6 caracteres</mat-error>
+    </mat-form-field>
+
+    <div class="toggle-row">
+      <div class="toggle-desc">
+        <strong>Usuário Ativo</strong>
+        <span>Usuários inativos não conseguem fazer login no sistema.</span>
+      </div>
+      <mat-slide-toggle formControlName="ativo" color="primary"></mat-slide-toggle>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-stroked-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" form="userForm" type="submit" [disabled]="form.invalid">
+    <mat-icon>save</mat-icon>
+    {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
+  </button>
+</mat-dialog-actions>

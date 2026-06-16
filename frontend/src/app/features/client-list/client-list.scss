@@ -1,0 +1,66 @@
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 4px 0;
+  }
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.table-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+  
+  mat-card-content {
+    padding: 24px !important;
+  }
+}
+
+.filter-header {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.filter-field {
+  width: 100%;
+  max-width: 400px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.mat-mdc-cell {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.actions-header {
+  text-align: right;
+}
