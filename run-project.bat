@@ -24,21 +24,38 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [1/2] Iniciando o Servidor Backend (Go) em uma nova janela...
-start "Backend (Go) - Porta 8080" cmd /k "cd backend && go run ./cmd/server"
+echo [1/3] Compilando o Backend (Go)...
+cd backend
+go build -o server.exe ./cmd/server
+if %errorlevel% neq 0 (
+    echo [ERRO] Falha ao compilar o backend.
+    pause
+    exit /b 1
+)
+echo  Backend compilado com sucesso.
 
 echo.
-echo [2/2] Iniciando o Servidor Frontend (Angular) em uma nova janela...
-start "Frontend (Angular) - Porta 4200" cmd /k "cd frontend && npm start"
+echo [2/3] Iniciando o Backend (binario compilado) em background...
+start /b "" server.exe
+
+cd ..
+
+echo.
+echo [3/3] Iniciando o Frontend (Angular dev server - porta 4200)...
+cd frontend
+start /b "" npm start
+cd ..
 
 echo.
 echo ==========================================================
 echo  Tudo pronto!
-echo  - Backend rodando em http://localhost:8080
-echo  - Frontend rodando em http://localhost:4200
+echo  - Backend:  http://localhost:8080
+echo  - Frontend: http://localhost:4200
 echo.
-echo  Aguarde os servidores carregarem por completo.
-echo  Pressione qualquer tecla nesta janela para fechar este script
-echo  (as janelas do backend e frontend continuarao rodando).
+echo  Aguarde o Angular carregar por completo antes de acessar.
+echo  Pressione qualquer tecla para encerrar os processos e sair.
 echo ==========================================================
 pause >nul
+
+taskkill /F /IM server.exe /T >nul 2>&1
+taskkill /F /IM node.exe /T >nul 2>&1
