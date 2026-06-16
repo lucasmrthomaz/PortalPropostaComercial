@@ -1,0 +1,82 @@
+# ============================================================
+# Go (backend)
+# ============================================================
+
+# Binários compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Arquivos de teste e cobertura
+*.test
+*.out
+coverage.html
+coverage.txt
+
+# Banco de dados SQLite gerado em runtime
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================
+# Angular (frontend)
+# ============================================================
+
+# Dependências
+node_modules/
+
+# Output de build
+dist/
+tmp/
+out-tsc/
+
+# Cache do Angular CLI
+.angular/cache/
+
+# ============================================================
+# Variáveis de ambiente e segredos
+# ============================================================
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# IDEs e editores
+# ============================================================
+
+# VSCode
+.vscode/
+!.vscode/extensions.json
+
+# JetBrains (GoLand, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+
+# ============================================================
+# Sistema Operacional
+# ============================================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# ============================================================
+# Logs e arquivos temporários
+# ============================================================
+*.log
+*.tmp
+*.swp
+*.swo
