@@ -23,7 +23,7 @@
   position: relative;
   overflow: hidden;
 
-  @media (max-width: 768px) { display: none; }
+  @media (max-width: 959px) { display: none; }
 }
 
 .brand-content {
@@ -127,7 +127,7 @@
   background: #f8fafc;
   padding: 32px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 959px) {
     flex: 1;
     padding: 24px;
   }

@@ -52,6 +52,15 @@
         <span class="label">Área Privativa:</span>
         <span class="value">{{ data.proposal.dados_especificos?.area_m2 }} m²</span>
       </div>
+      <div class="detail-row photo-row" *ngIf="data.proposal.dados_especificos?.foto">
+        <span class="label">Foto do Imóvel:</span>
+        <div class="value block photo-container">
+          <img [src]="data.proposal.dados_especificos.foto" alt="Foto do Imóvel" class="detail-photo">
+          <a [href]="data.proposal.dados_especificos.foto" download="foto_imovel.png" class="download-link-btn">
+            <mat-icon>download</mat-icon> Baixar Imagem
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Auto Details -->
@@ -68,6 +77,15 @@
         <span class="label">Placa:</span>
         <span class="value uppercase">{{ data.proposal.dados_especificos?.placa }}</span>
       </div>
+      <div class="detail-row photo-row" *ngIf="data.proposal.dados_especificos?.foto">
+        <span class="label">Foto do Veículo:</span>
+        <div class="value block photo-container">
+          <img [src]="data.proposal.dados_especificos.foto" alt="Foto do Veículo" class="detail-photo">
+          <a [href]="data.proposal.dados_especificos.foto" download="foto_veiculo.png" class="download-link-btn">
+            <mat-icon>download</mat-icon> Baixar Imagem
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Compra/Venda Details -->
@@ -79,6 +97,29 @@
       <div class="detail-row">
         <span class="label">Condições de Pagamento:</span>
         <span class="value">{{ data.proposal.dados_especificos?.condicoes_pagamento }}</span>
+      </div>
+      <div class="detail-row photo-row" *ngIf="data.proposal.dados_especificos?.foto">
+        <span class="label">Foto do Item:</span>
+        <div class="value block photo-container">
+          <img [src]="data.proposal.dados_especificos.foto" alt="Foto do Item" class="detail-photo">
+          <a [href]="data.proposal.dados_especificos.foto" download="foto_item.png" class="download-link-btn">
+            <mat-icon>download</mat-icon> Baixar Imagem
+          </a>
+        </div>
+      </div>
+      <div class="detail-row attachment-row" *ngIf="data.proposal.dados_especificos?.anexo">
+        <span class="label">Documento Anexo:</span>
+        <div class="value block attachment-container">
+          <div class="detail-doc-card">
+            <mat-icon class="doc-icon">insert_drive_file</mat-icon>
+            <div class="doc-details">
+              <span class="doc-title">{{ data.proposal.dados_especificos.nome_anexo || 'Documento Anexo' }}</span>
+            </div>
+            <a [href]="data.proposal.dados_especificos.anexo" [download]="data.proposal.dados_especificos.nome_anexo || 'documento'" class="download-btn-circle">
+              <mat-icon>download</mat-icon>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 

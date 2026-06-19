@@ -38,6 +38,7 @@
           <mat-icon matListItemIcon>business</mat-icon>
           <span matListItemTitle>Empresas Parceiras</span>
         </a>
+
         <a mat-list-item routerLink="/supervisor" routerLinkActive="active-link" *ngIf="canSeeSupervisor()">
           <mat-icon matListItemIcon>security</mat-icon>
           <span matListItemTitle>Painel Supervisor</span>
@@ -66,6 +67,27 @@
         </button>
         <span class="toolbar-title">{{ (isHandset$ | async) ? 'Portal Propostas' : 'Sistema de Cadastro & Propostas Comerciais' }}</span>
         <span class="toolbar-spacer"></span>
+
+        <!-- Quick Actions -->
+        <button mat-button [matMenuTriggerFor]="quickActionsMenu" class="quick-actions-btn" style="color: white; border-radius: 24px; font-weight: 600; margin-right: 8px; background: rgba(255, 255, 255, 0.15);">
+          <mat-icon>add</mat-icon>
+          <span *ngIf="!(isHandset$ | async)">Novo</span>
+        </button>
+
+        <mat-menu #quickActionsMenu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="openNewClient()">
+            <mat-icon color="primary">person_add</mat-icon>
+            <span>Novo Cliente</span>
+          </button>
+          <button mat-menu-item (click)="openNewProposal()">
+            <mat-icon color="accent">assignment</mat-icon>
+            <span>Nova Proposta</span>
+          </button>
+          <button mat-menu-item (click)="openNewCompany()" *ngIf="canSeeSettings()">
+            <mat-icon style="color: #9c27b0;">business</mat-icon>
+            <span>Nova Empresa Parceira</span>
+          </button>
+        </mat-menu>
 
         <!-- User menu -->
         <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-btn" id="user-menu-trigger">
@@ -113,6 +135,7 @@
           <mat-icon>business</mat-icon>
           <span>Empresas</span>
         </a>
+
         <a routerLink="/configuracoes" routerLinkActive="active-bottom-link" class="nav-item" *ngIf="canSeeSettings()">
           <mat-icon>settings</mat-icon>
           <span>Config.</span>

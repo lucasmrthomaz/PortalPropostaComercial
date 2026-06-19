@@ -13,6 +13,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ClientForm } from './features/client-form/client-form';
+import { ProposalForm } from './features/proposal-form/proposal-form';
+import { CompanyForm } from './features/company-form/company-form';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +32,7 @@ import { AuthService } from './core/services/auth.service';
     MatMenuModule,
     MatTooltipModule,
     MatDividerModule,
+    MatDialogModule,
     CommonModule
   ],
   templateUrl: './app.html',
@@ -36,8 +41,10 @@ import { AuthService } from './core/services/auth.service';
 export class App {
   private breakpointObserver = inject(BreakpointObserver);
   readonly auth = inject(AuthService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 959px)')
     .pipe(map(result => result.matches), shareReplay());
 
   readonly userInitials = computed(() => {
@@ -55,5 +62,53 @@ export class App {
 
   logout(): void {
     this.auth.logout();
+  }
+
+  openNewClient(): void {
+    const dialogRef = this.dialog.open(ClientForm, {
+      width: '600px',
+      data: null
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (this.router.url.startsWith('/clientes')) {
+          window.location.reload();
+        } else {
+          this.router.navigate(['/clientes']);
+        }
+      }
+    });
+  }
+
+  openNewProposal(): void {
+    const dialogRef = this.dialog.open(ProposalForm, {
+      width: '700px',
+      data: null
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (this.router.url.startsWith('/propostas')) {
+          window.location.reload();
+        } else {
+          this.router.navigate(['/propostas']);
+        }
+      }
+    });
+  }
+
+  openNewCompany(): void {
+    const dialogRef = this.dialog.open(CompanyForm, {
+      width: '650px',
+      data: null
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (this.router.url.startsWith('/configuracoes')) {
+          window.location.reload();
+        } else {
+          this.router.navigate(['/configuracoes']);
+        }
+      }
+    });
   }
 }

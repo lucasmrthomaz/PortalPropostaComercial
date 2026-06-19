@@ -123,7 +123,8 @@
         <ng-container matColumnDef="acoes">
           <th mat-header-cell *matHeaderCellDef class="actions-header"> Ações </th>
           <td mat-cell *matCellDef="let element" class="actions-cell">
-            <div class="actions-wrapper">
+            <!-- Desktop Actions -->
+            <div class="actions-wrapper desktop-actions">
               <button mat-icon-button color="primary" (click)="openDetails(element)" title="Ver Detalhes">
                 <mat-icon>visibility</mat-icon>
               </button>
@@ -139,6 +140,35 @@
               <button mat-icon-button color="warn" (click)="deleteProposal(element)" title="Excluir Proposta">
                 <mat-icon>delete</mat-icon>
               </button>
+            </div>
+
+            <!-- Mobile Actions Menu -->
+            <div class="actions-wrapper mobile-actions">
+              <button mat-icon-button [matMenuTriggerFor]="proposalMenu" aria-label="Ações da proposta">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #proposalMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="openDetails(element)">
+                  <mat-icon color="primary">visibility</mat-icon>
+                  <span>Ver Detalhes</span>
+                </button>
+                <button mat-menu-item *ngIf="!element.empresa" (click)="forwardProposal(element)">
+                  <mat-icon color="accent">send</mat-icon>
+                  <span>Encaminhar</span>
+                </button>
+                <button mat-menu-item *ngIf="element.status !== 'Aprovada'" (click)="approveProposalDirectly(element)">
+                  <mat-icon color="primary">check_circle</mat-icon>
+                  <span>Aprovar Proposta</span>
+                </button>
+                <button mat-menu-item (click)="openProposalForm(element)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar Proposta</span>
+                </button>
+                <button mat-menu-item (click)="deleteProposal(element)">
+                  <mat-icon color="warn">delete</mat-icon>
+                  <span>Excluir Proposta</span>
+                </button>
+              </mat-menu>
             </div>
           </td>
         </ng-container>

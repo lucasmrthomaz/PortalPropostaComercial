@@ -86,6 +86,26 @@
             <mat-error *ngIf="proposalForm.get('dados_especificos.area_m2')?.hasError('min')">A área deve ser maior que zero</mat-error>
           </mat-form-field>
         </div>
+
+        <!-- Photo Upload Field -->
+        <div class="attachment-upload-section">
+          <span class="attachment-label">Foto do Imóvel</span>
+          <div class="upload-controls">
+            <input type="file" #photoInputImovel (change)="onPhotoSelected($event)" accept="image/*" style="display: none;">
+            <button type="button" mat-stroked-button color="primary" (click)="photoInputImovel.click()">
+              <mat-icon>photo_camera</mat-icon> Anexar Foto
+            </button>
+            <span class="upload-tip">Selecione uma imagem (PNG, JPG)</span>
+          </div>
+          <div class="preview-container" *ngIf="proposalForm.get('dados_especificos.foto')?.value">
+            <div class="preview-card">
+              <img [src]="proposalForm.get('dados_especificos.foto')?.value" alt="Foto do Imóvel" class="photo-preview">
+              <button type="button" mat-mini-fab color="warn" class="remove-btn" (click)="removePhoto(); photoInputImovel.value=''">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Auto Fields -->
@@ -119,6 +139,26 @@
             <mat-error *ngIf="proposalForm.get('dados_especificos.placa')?.hasError('required')">A placa é obrigatória</mat-error>
           </mat-form-field>
         </div>
+
+        <!-- Photo Upload Field -->
+        <div class="attachment-upload-section">
+          <span class="attachment-label">Foto do Veículo</span>
+          <div class="upload-controls">
+            <input type="file" #photoInputAuto (change)="onPhotoSelected($event)" accept="image/*" style="display: none;">
+            <button type="button" mat-stroked-button color="primary" (click)="photoInputAuto.click()">
+              <mat-icon>photo_camera</mat-icon> Anexar Foto
+            </button>
+            <span class="upload-tip">Selecione uma imagem (PNG, JPG)</span>
+          </div>
+          <div class="preview-container" *ngIf="proposalForm.get('dados_especificos.foto')?.value">
+            <div class="preview-card">
+              <img [src]="proposalForm.get('dados_especificos.foto')?.value" alt="Foto do Veículo" class="photo-preview">
+              <button type="button" mat-mini-fab color="warn" class="remove-btn" (click)="removePhoto(); photoInputAuto.value=''">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Compra/Venda Fields -->
@@ -135,6 +175,50 @@
           <input matInput formControlName="condicoes_pagamento" placeholder="Ex: Entrada de 50% + 3x no cartão de crédito">
           <mat-error *ngIf="proposalForm.get('dados_especificos.condicoes_pagamento')?.hasError('required')">As condições de pagamento são obrigatórias</mat-error>
         </mat-form-field>
+
+        <div class="attachments-grid">
+          <!-- Photo Upload -->
+          <div class="attachment-upload-section">
+            <span class="attachment-label">Foto do Item</span>
+            <div class="upload-controls">
+              <input type="file" #photoInputCV (change)="onPhotoSelected($event)" accept="image/*" style="display: none;">
+              <button type="button" mat-stroked-button color="primary" (click)="photoInputCV.click()">
+                <mat-icon>photo_camera</mat-icon> Anexar Foto
+              </button>
+            </div>
+            <div class="preview-container" *ngIf="proposalForm.get('dados_especificos.foto')?.value">
+              <div class="preview-card">
+                <img [src]="proposalForm.get('dados_especificos.foto')?.value" alt="Foto do Item" class="photo-preview">
+                <button type="button" mat-mini-fab color="warn" class="remove-btn" (click)="removePhoto(); photoInputCV.value=''">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Upload -->
+          <div class="attachment-upload-section">
+            <span class="attachment-label">Documento Adicional (Até 8MB)</span>
+            <div class="upload-controls">
+              <input type="file" #docInputCV (change)="onAttachmentSelected($event)" style="display: none;">
+              <button type="button" mat-stroked-button color="accent" (click)="docInputCV.click()">
+                <mat-icon>attach_file</mat-icon> Anexar Documento
+              </button>
+              <span class="upload-tip">Tamanho máximo: 8MB</span>
+            </div>
+            <div class="doc-preview-container" *ngIf="proposalForm.get('dados_especificos.anexo')?.value">
+              <div class="doc-card">
+                <mat-icon color="primary" class="doc-icon">insert_drive_file</mat-icon>
+                <div class="doc-info">
+                  <span class="doc-name">{{ proposalForm.get('dados_especificos.nome_anexo')?.value || 'Documento Anexo' }}</span>
+                </div>
+                <button type="button" mat-icon-button color="warn" (click)="removeAttachment(); docInputCV.value=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Dynamic Fields -->

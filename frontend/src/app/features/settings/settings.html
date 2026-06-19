@@ -1,6 +1,6 @@
 <div class="settings-header">
   <h1>Configurações do Portal</h1>
-  <p>Gerencie todos os módulos do sistema: parâmetros operacionais, usuários, perfis de acesso e tipos de proposta.</p>
+  <p>Gerencie todos os módulos do sistema: parâmetros operacionais, usuários, perfis de acesso, tipos de proposta e empresas parceiras.</p>
 </div>
 
 <div *ngIf="loading()" class="spinner-container">
@@ -126,6 +126,92 @@
         <div class="no-data-placeholder" *ngIf="proposalTypes().length === 0">
           <mat-icon>inbox</mat-icon>
           <p>Nenhum tipo de proposta cadastrado.</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ======================== -->
+  <!-- EMPRESAS PARCEIRAS       -->
+  <!-- ======================== -->
+  <div class="section-label">
+    <mat-icon>business</mat-icon>
+    <span>Empresas Parceiras</span>
+  </div>
+
+  <mat-card class="settings-card mat-elevation-z2">
+    <mat-card-content>
+      <div class="card-header-with-action">
+        <div>
+          <h2>Empresas Parceiras</h2>
+          <p>Cadastre e gerencie as empresas parceiras que recebem o encaminhamento de propostas.</p>
+        </div>
+        <button mat-raised-button color="primary" type="button" (click)="openCompanyDialog()">
+          <mat-icon>add</mat-icon> Nova Empresa
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table mat-table [dataSource]="companies()" class="crud-table">
+
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let element">
+              <strong>{{ element.nome }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cnpj">
+            <th mat-header-cell *matHeaderCellDef>CNPJ</th>
+            <td mat-cell *matCellDef="let element"><code>{{ element.cnpj }}</code></td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>E-mail</th>
+            <td mat-cell *matCellDef="let element" class="email-cell">{{ element.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="responsavel">
+            <th mat-header-cell *matHeaderCellDef>Responsável</th>
+            <td mat-cell *matCellDef="let element">
+              <span *ngIf="element.responsavel_nome; else noResp">
+                {{ element.responsavel_nome }}
+                <span *ngIf="element.responsavel_email" style="font-size: 0.8rem; color: #777; display: block;">
+                  {{ element.responsavel_email }}
+                </span>
+              </span>
+              <ng-template #noResp>—</ng-template>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let element">
+              <span class="status-badge" [class.active]="element.ativo" [class.inactive]="!element.ativo">
+                <mat-icon>{{ element.ativo ? 'check_circle' : 'cancel' }}</mat-icon>
+                {{ element.ativo ? 'Ativa' : 'Inativa' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Ações</th>
+            <td mat-cell *matCellDef="let element" class="actions-cell">
+              <button mat-icon-button color="primary" (click)="openCompanyDialog(element)" matTooltip="Editar empresa">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteCompany(element)" matTooltip="Excluir empresa">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsCompanies"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsCompanies;"></tr>
+        </table>
+        <div class="no-data-placeholder" *ngIf="companies().length === 0">
+          <mat-icon>business</mat-icon>
+          <p>Nenhuma empresa parceira cadastrada.</p>
         </div>
       </div>
     </mat-card-content>

@@ -113,7 +113,7 @@ body {
 // ============================================================================
 // MOBILE TABLE RESPONSIVENESS & HIDING PATTERN
 // ============================================================================
-@media (max-width: 768px) {
+@media (max-width: 959px) {
   // Hide non-essential columns for Clients
   .mat-column-cpf_cnpj,
   .mat-column-email,
@@ -141,6 +141,15 @@ body {
   }
 }
 
+// Prevent tables from squishing when columns are fully displayed
+table {
+  min-width: 720px;
+  
+  @media (max-width: 959px) {
+    min-width: 100%;
+  }
+}
+
 // ============================================================================
 // TABLE ACTIONS LAYOUT FIX (CRITICAL FIX FOR BREAKING ACTIONS OVER BORDERS)
 // ============================================================================
@@ -160,7 +169,7 @@ body {
 
   // Stacking actions for supervisor panel / wide items on mobile
   &.stack-mobile {
-    @media (max-width: 768px) {
+    @media (max-width: 959px) {
       flex-direction: column;
       align-items: stretch;
       gap: 6px;
@@ -254,6 +263,27 @@ h1, h2, h3, h4, h5, h6 {
     button {
       width: 100% !important;
       margin-top: 4px;
+    }
+  }
+}
+
+.mobile-actions {
+  display: none !important;
+}
+
+@media (max-width: 959px) {
+  .desktop-actions {
+    display: none !important;
+  }
+  .mobile-actions {
+    display: inline-flex !important;
+  }
+}
+
+.table-card {
+  @media (max-width: 600px) {
+    mat-card-content {
+      padding: 16px 12px !important;
     }
   }
 }

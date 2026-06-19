@@ -10,6 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
 import { ClientService } from '../../core/services/client.service';
 import { Cliente } from '../../core/models/client.model';
 import { ClientForm } from '../client-form/client-form';
@@ -29,7 +30,8 @@ import { PedidoAnalise } from '../../core/models/supervisor.model';
     MatFormFieldModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatMenuModule
   ],
   templateUrl: './client-list.html',
   styleUrl: './client-list.scss'

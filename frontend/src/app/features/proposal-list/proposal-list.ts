@@ -10,6 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
 import { ProposalService } from '../../core/services/proposal.service';
 import { ClientService } from '../../core/services/client.service';
 import { CompanyService } from '../../core/services/company.service';
@@ -35,7 +36,8 @@ import { SupervisorDialog } from '../../shared/components/supervisor-dialog/supe
     MatSnackBarModule,
     MatProgressSpinnerModule,
     CurrencyPipe,
-    DatePipe
+    DatePipe,
+    MatMenuModule
   ],
   templateUrl: './proposal-list.html',
   styleUrl: './proposal-list.scss'

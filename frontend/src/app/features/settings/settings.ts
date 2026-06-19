@@ -24,6 +24,9 @@ import { UsuarioService } from '../../core/services/usuario.service';
 import { Perfil, Usuario } from '../../core/models/user.model';
 import { ProfileDialog } from './profile-dialog/profile-dialog';
 import { UserDialog } from './user-dialog/user-dialog';
+import { CompanyService } from '../../core/services/company.service';
+import { Empresa } from '../../core/models/company.model';
+import { CompanyForm } from '../company-form/company-form';
 
 @Component({
   selector: 'app-settings',
@@ -54,6 +57,7 @@ export class SettingsComponent implements OnInit {
   private proposalTypeService = inject(ProposalTypeService);
   private perfilService = inject(PerfilService);
   private usuarioService = inject(UsuarioService);
+  private companyService = inject(CompanyService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
 
@@ -68,6 +72,9 @@ export class SettingsComponent implements OnInit {
 
   usuarios = signal<Usuario[]>([]);
   displayedColumnsUsuarios: string[] = ['nome', 'email', 'perfil', 'status', 'acoes'];
+
+  companies = signal<Empresa[]>([]);
+  displayedColumnsCompanies: string[] = ['nome', 'cnpj', 'email', 'responsavel', 'status', 'acoes'];
 
   ngOnInit(): void {
     this.initForm();
@@ -86,6 +93,7 @@ export class SettingsComponent implements OnInit {
     this.loadProposalTypes();
     this.loadPerfis();
     this.loadUsuarios();
+    this.loadCompanies();
   }
 
   loadSettings(): void {
@@ -119,6 +127,13 @@ export class SettingsComponent implements OnInit {
     this.usuarioService.list().subscribe({
       next: (data) => this.usuarios.set(data),
       error: () => this.snackBar.open('Erro ao carregar usuários.', 'Fechar', { duration: 5000 })
+    });
+  }
+
+  loadCompanies(): void {
+    this.companyService.list().subscribe({
+      next: (data) => this.companies.set(data),
+      error: () => this.snackBar.open('Erro ao carregar empresas parceiras.', 'Fechar', { duration: 5000 })
     });
   }
 
@@ -255,6 +270,38 @@ export class SettingsComponent implements OnInit {
       this.usuarioService.delete(usuario.id!).subscribe({
         next: () => { this.snackBar.open('Usuário excluído!', 'Fechar', { duration: 3000 }); this.loadUsuarios(); },
         error: (err) => this.snackBar.open(err.error?.error || 'Erro ao excluir usuário.', 'Fechar', { duration: 5000 })
+      });
+    }
+  }
+
+  // ===============================
+  // COMPANY CRUD
+  // ===============================
+  openCompanyDialog(company?: Empresa): void {
+    const dialogRef = this.dialog.open(CompanyForm, {
+      width: '650px',
+      maxWidth: '95vw',
+      data: company || null
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean | undefined) => {
+      if (result) {
+        this.loadCompanies();
+      }
+    });
+  }
+
+  deleteCompany(company: Empresa): void {
+    if (confirm(`Deseja realmente excluir a empresa parceira "${company.nome}"?`)) {
+      if (!company.id) return;
+      this.companyService.delete(company.id).subscribe({
+        next: () => {
+          this.snackBar.open('Empresa parceira excluída com sucesso!', 'Fechar', { duration: 3000 });
+          this.loadCompanies();
+        },
+        error: (err) => {
+          this.snackBar.open(err.error?.error || 'Erro ao excluir empresa.', 'Fechar', { duration: 5000 });
+        }
       });
     }
   }

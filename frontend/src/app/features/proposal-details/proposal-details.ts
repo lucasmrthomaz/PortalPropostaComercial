@@ -29,6 +29,13 @@ export class ProposalDetails implements OnInit {
 
   ngOnInit(): void {
     this.loadProposalTypes();
+    if (this.data.proposal && typeof this.data.proposal.dados_especificos === 'string') {
+      try {
+        this.data.proposal.dados_especificos = JSON.parse(this.data.proposal.dados_especificos);
+      } catch (e) {
+        console.error('Erro ao fazer parse de dados especificos nos detalhes', e);
+      }
+    }
   }
 
   loadProposalTypes(): void {
