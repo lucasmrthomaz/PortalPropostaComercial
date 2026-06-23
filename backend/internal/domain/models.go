@@ -11,7 +11,7 @@ type ProposalType string
 const (
 	ProposalTypeImobiliaria ProposalType = "Imobiliaria"
 	ProposalTypeAuto        ProposalType = "Auto"
-	ProposalTypeCompraVenda  ProposalType = "CompraVenda"
+	ProposalTypeComissionados ProposalType = "Comissionados"
 )
 
 type ProposalStatus string
@@ -208,7 +208,7 @@ var (
 	ErrInvalidClientEmail      = errors.New("email do cliente é obrigatório ou inválido")
 	ErrInvalidCompanyName      = errors.New("nome da empresa é obrigatório")
 	ErrInvalidCompanyEmail     = errors.New("email da empresa é obrigatório ou inválido")
-	ErrInvalidProposalType     = errors.New("tipo de proposta inválido (use Imobiliaria, Auto ou CompraVenda)")
+	ErrInvalidProposalType     = errors.New("tipo de proposta inválido (use Imobiliaria, Auto ou Comissionados)")
 	ErrInvalidProposalVal      = errors.New("valor da proposta deve ser maior que zero")
 	ErrSupervisorAuthFailed    = errors.New("senha do supervisor incorreta")
 	ErrSupervisorActionDone    = errors.New("este pedido de análise já foi processado")

@@ -1,0 +1,24 @@
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+}
+
+.sec-representative {
+  margin-top: 12px;
+}
+
+.switch-wrapper {
+  display: flex;
+  align-items: center;
+  padding-top: 24px;
+}

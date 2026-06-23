@@ -49,6 +49,16 @@ func main() {
 		log.Fatalf("Falha ao executar migrações: %v", err)
 	}
 
+	// Migração do tipo legado 'CompraVenda' para 'Comissionados (PVA)' se existir no banco de dados
+	log.Println("Migrando tipo de proposta legado 'CompraVenda' para 'Comissionados (PVA)'...")
+	db.Model(&domain.TipoProposta{}).Where("chave = ?", "CompraVenda").Updates(map[string]interface{}{
+		"nome":  "Comissionados (PVA)",
+		"chave": "Comissionados",
+	})
+	db.Model(&domain.Proposta{}).Where("tipo = ?", "CompraVenda").Update("tipo", "Comissionados")
+	// Força a atualização do nome para "Comissionados (PVA)" caso a chave já seja "Comissionados"
+	db.Model(&domain.TipoProposta{}).Where("chave = ?", "Comissionados").Update("nome", "Comissionados (PVA)")
+
 	// Seed de configurações iniciais se não existirem
 	var count int64
 	db.Model(&domain.Configuracao{}).Where("chave = ?", "taxa_corretagem").Count(&count)
@@ -85,8 +95,8 @@ func main() {
 		})
 		db.Create(&domain.TipoProposta{
 			ID:        "3",
-			Nome:      "Compra/Venda Diversas",
-			Chave:     "CompraVenda",
+			Nome:      "Comissionados (PVA)",
+			Chave:     "Comissionados",
 			Campos:    domain.JSONB(`[{"nome":"Descrição dos Itens / Serviços","chave":"itens","tipo":"text","obrigatorio":true},{"nome":"Condições de Pagamento","chave":"condicoes_pagamento","tipo":"text","obrigatorio":true}]`),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),

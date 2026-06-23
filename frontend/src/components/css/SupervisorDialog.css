@@ -1,0 +1,71 @@
+.description {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.info-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background-color: var(--bg-app);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary);
+  margin-bottom: 24px;
+}
+
+.auth-section h3,
+.analysis-section h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pwd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #fafafa;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid #f0f0f0;
+}
+
+.divider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+  gap: 12px;
+}
+
+.divider-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.divider-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.analysis-section {
+  background-color: #fafafa;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid #f0f0f0;
+}
+
+.sub-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

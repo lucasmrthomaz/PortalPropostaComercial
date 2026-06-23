@@ -1,0 +1,79 @@
+.divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 20px 0;
+}
+
+.fields-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-header-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header-action h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.legacy-note {
+  font-size: 0.82rem;
+  color: var(--warning-dark);
+  background-color: var(--warning-light);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.no-fields-msg {
+  text-align: center;
+  padding: 24px;
+  background-color: var(--bg-app);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.fields-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-item-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  background-color: #fafafa;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid #f0f0f0;
+}
+
+.field-col {
+  margin-bottom: 0;
+}
+
+.checkbox-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: 6px;
+}
+
+.action-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 4px;
+}

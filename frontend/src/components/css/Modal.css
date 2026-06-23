@@ -1,0 +1,17 @@
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.22s ease;
+}
+
+.modal-fade-enter-active .modal-container {
+  animation: modalScaleIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-fade-leave-active .modal-container {
+  animation: modalScaleIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) reverse;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}

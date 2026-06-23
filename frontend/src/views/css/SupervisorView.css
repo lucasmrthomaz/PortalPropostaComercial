@@ -1,0 +1,36 @@
+.decision-btn {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+}
+
+.decision-btn.approve {
+  background-color: var(--success);
+  color: white;
+}
+
+.decision-btn.approve:hover {
+  background-color: var(--success-dark);
+}
+
+.processed-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 500;
+}
+
+@media (max-width: 959px) {
+  .actions-cell {
+    white-space: normal;
+  }
+  
+  .stack-mobile {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 6px;
+  }
+  
+  .stack-mobile button {
+    width: 100%;
+  }
+}

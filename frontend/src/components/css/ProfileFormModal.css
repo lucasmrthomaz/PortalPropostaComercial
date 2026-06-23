@@ -1,0 +1,48 @@
+.divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 20px 0;
+}
+
+.permissions-section h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.superadmin-note {
+  font-size: 0.88rem;
+  color: var(--success-dark);
+  background-color: var(--success-light);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.perm-checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-smooth);
+}
+
+.perm-checkbox-container:hover {
+  background-color: var(--bg-app);
+}
+
+.perm-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-main);
+}

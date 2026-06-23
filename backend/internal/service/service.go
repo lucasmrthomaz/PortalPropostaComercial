@@ -364,7 +364,7 @@ func (s *PropostaService) Update(id string, input *domain.Proposta) (*domain.Pro
 }
 
 func (s *PropostaService) validateDynamicFields(tipo *domain.TipoProposta, dadosEspecificos domain.JSONB) error {
-	if tipo.Chave == "Imobiliaria" || tipo.Chave == "Auto" || tipo.Chave == "CompraVenda" {
+	if tipo.Chave == "Imobiliaria" || tipo.Chave == "Auto" || tipo.Chave == "Comissionados" {
 		return nil
 	}
 
@@ -673,7 +673,7 @@ func (s *TipoPropostaService) Update(id string, input *domain.TipoProposta) (*do
 		return nil, errors.New("o nome do tipo de proposta é obrigatório")
 	}
 
-	isLegacy := tipo.Chave == "Imobiliaria" || tipo.Chave == "Auto" || tipo.Chave == "CompraVenda"
+	isLegacy := tipo.Chave == "Imobiliaria" || tipo.Chave == "Auto" || tipo.Chave == "Comissionados"
 
 	if !isLegacy && strings.TrimSpace(input.Chave) != "" && input.Chave != tipo.Chave {
 		reg := regexp.MustCompile(`[^a-zA-Z0-9]`)
@@ -706,7 +706,7 @@ func (s *TipoPropostaService) Delete(id string) error {
 		return errors.New("tipo de proposta não encontrado")
 	}
 
-	if tipo.Chave == "Imobiliaria" || tipo.Chave == "Auto" || tipo.Chave == "CompraVenda" {
+	if tipo.Chave == "Imobiliaria" || tipo.Chave == "Auto" || tipo.Chave == "Comissionados" {
 		return errors.New("não é permitido excluir tipos de proposta do sistema")
 	}
 

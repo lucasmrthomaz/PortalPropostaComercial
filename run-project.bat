@@ -41,16 +41,16 @@ start /b "" server.exe
 cd ..
 
 echo.
-echo [3/3] Iniciando o Frontend (Angular dev server - porta 4200)...
+echo [3/3] Iniciando o Frontend (Angular dev server - porta 5173)...
 cd frontend
-start /b "" npm start
+start /b "" yarn run dev
 cd ..
 
 echo.
 echo ==========================================================
 echo  Tudo pronto!
 echo  - Backend:  http://localhost:8080
-echo  - Frontend: http://localhost:4200
+echo  - Frontend: http://localhost:5173
 echo.
 echo  Aguarde o Angular carregar por completo antes de acessar.
 echo  Pressione qualquer tecla para encerrar os processos e sair.
