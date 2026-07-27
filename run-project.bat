@@ -1,16 +1,20 @@
 @echo off
 title Cadastro Cliente Proposta - Startup Script
+
+:: Garante que o diretorio de trabalho seja o mesmo de onde o script esta localizado
+cd /d "%~dp0"
+
 echo ==========================================================
 echo  Iniciando o Sistema de Cadastro de Clientes e Propostas
 echo ==========================================================
 
 :: Adiciona caminhos padroes ao PATH caso nao estejam presentes
-set "PATH=%PATH%;C:\Program Files\Go\bin;C:\Program Files\nodejs"
+set "PATH=%PATH%;C:\Program Files\dotnet;C:\Program Files\nodejs"
 
-:: Verifica se o Go esta instalado/disponivel
-where go >nul 2>&1
+:: Verifica se o .NET SDK esta instalado/disponivel
+where dotnet >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERRO] Go nao foi encontrado no PATH. Por favor, instale o Go ou certifique-se de que ele esta no PATH.
+    echo [ERRO] .NET SDK nao foi encontrado no PATH. Por favor, instale o .NET SDK 10 ou certifique-se de que ele esta no PATH.
     pause
     exit /b 1
 )
@@ -24,19 +28,19 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [1/3] Compilando o Backend (Go)...
-cd backend
-go build -o server.exe ./cmd/server
+echo [1/3] Compilando o Backend (.NET 10)...
+cd backend-net10
+dotnet build -c Release
 if %errorlevel% neq 0 (
-    echo [ERRO] Falha ao compilar o backend.
+    echo [ERRO] Falha ao compilar o backend NET 10.
     pause
     exit /b 1
 )
 echo  Backend compilado com sucesso.
 
 echo.
-echo [2/3] Iniciando o Backend (binario compilado) em background...
-start /b "" server.exe
+echo [2/3] Iniciando o Backend (.NET 10) em background...
+start /b "" bin\Release\net10.0\backend-net10.exe
 
 cd ..
 
@@ -57,5 +61,5 @@ echo  Pressione qualquer tecla para encerrar os processos e sair.
 echo ==========================================================
 pause >nul
 
-taskkill /F /IM server.exe /T >nul 2>&1
+taskkill /F /IM backend-net10.exe /T >nul 2>&1
 taskkill /F /IM node.exe /T >nul 2>&1
