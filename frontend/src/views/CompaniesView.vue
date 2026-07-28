@@ -10,78 +10,53 @@
       </button>
     </div>
 
-    <!-- Table Card -->
-    <div class="card table-card mat-elevation-z4">
-      <div class="filter-header">
-        <div class="input-with-icon filter-field">
-          <i class="material-icons icon-prefix">search</i>
-          <input
-            type="text"
-            v-model="searchQuery"
-            class="form-control"
-            placeholder="Buscar Empresa (Nome, CNPJ...)"
-          />
+    <!-- DataTable with filter -->
+    <DataTable
+      :columns="companyColumns"
+      :rows="filteredCompanies"
+      :loading="loading"
+      empty-icon="business"
+      empty-text="Nenhuma empresa encontrada."
+      paginate
+      :per-page="perPage"
+    >
+      <!-- Filter slot -->
+      <template #filter>
+        <FilterField
+          v-model="searchQuery"
+          type="search"
+          placeholder="Buscar Empresa (Nome, CNPJ...)"
+        />
+      </template>
+
+      <!-- Custom cell: Responsável -->
+      <template #cell-responsavel="{ row: c }">
+        <div v-if="c.responsavel_nome" style="display: flex; flex-direction: column; gap: 2px;">
+          <strong>{{ c.responsavel_nome }}</strong>
+          <span class="text-muted-small">{{ c.responsavel_email }}</span>
+          <span class="text-muted-small">{{ formatarTelefone(c.responsavel_telefone) || '—' }}</span>
         </div>
-      </div>
+        <span v-else>—</span>
+      </template>
 
-      <div v-if="loading" class="spinner-container">
-        <div class="spinner"></div>
-      </div>
+      <!-- Custom cell: Status -->
+      <template #cell-status="{ row: c }">
+        <span class="status-badge" :class="c.ativo ? 'active' : 'inactive'">
+          <i class="material-icons" style="font-size: 16px;">{{ c.ativo ? 'check_circle' : 'cancel' }}</i>
+          <span>{{ c.ativo ? 'Ativa' : 'Inativa' }}</span>
+        </span>
+      </template>
 
-      <div v-else class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Razão Social / Fantasia</th>
-              <th class="col-cnpj">CNPJ</th>
-              <th class="col-email">E-mail Comercial</th>
-              <th>Responsável / Contato</th>
-              <th class="col-status-desc">Status</th>
-              <th class="actions-header" style="text-align: right;">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="c in filteredCompanies" :key="c.id">
-              <td>
-                <strong>{{ c.nome }}</strong>
-              </td>
-              <td class="col-cnpj"><code>{{ formatarCNPJ(c.cnpj) }}</code></td>
-              <td class="col-email">{{ c.email }}</td>
-              <td>
-                <div v-if="c.responsavel_nome" style="display: flex; flex-direction: column; gap: 2px;">
-                  <strong>{{ c.responsavel_nome }}</strong>
-                  <span style="font-size: 0.8rem; color: var(--text-muted);">{{ c.responsavel_email }}</span>
-                  <span style="font-size: 0.8rem; color: var(--text-muted);">{{ formatarTelefone(c.responsavel_telefone) || '—' }}</span>
-                </div>
-                <span v-else>—</span>
-              </td>
-              <td class="col-status-desc">
-                <span class="status-badge" :class="c.ativo ? 'active' : 'inactive'">
-                  <i class="material-icons" style="font-size: 16px;">{{ c.ativo ? 'check_circle' : 'cancel' }}</i>
-                  <span>{{ c.ativo ? 'Ativa' : 'Inativa' }}</span>
-                </span>
-              </td>
-              <td class="actions-cell">
-                <div class="actions-wrapper">
-                  <button class="btn-icon" @click="openFormModal(c)" title="Editar Empresa">
-                    <i class="material-icons">edit</i>
-                  </button>
-                  <button class="btn-icon btn-icon-danger" @click="deleteCompany(c)" title="Excluir Empresa">
-                    <i class="material-icons">delete</i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="filteredCompanies.length === 0">
-              <td colspan="6" class="no-data-placeholder">
-                <i class="material-icons">business</i>
-                <span>Nenhuma empresa encontrada.</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Actions slot -->
+      <template #actions="{ row: c }">
+        <button class="btn-icon" @click="openFormModal(c)" title="Editar Empresa">
+          <i class="material-icons">edit</i>
+        </button>
+        <button class="btn-icon btn-icon-danger" @click="deleteCompany(c)" title="Excluir Empresa">
+          <i class="material-icons">delete</i>
+        </button>
+      </template>
+    </DataTable>
 
     <!-- Modal Form -->
     <CompanyFormModal
@@ -97,14 +72,26 @@
 import { ref, computed, onMounted } from 'vue'
 import { Empresa } from '@/types'
 import { api } from '@/services/api'
+import DataTable from '@/components/DataTable.vue'
+import FilterField from '@/components/FilterField.vue'
 import CompanyFormModal from '@/components/CompanyFormModal.vue'
 import { formatarCNPJ, formatarTelefone } from '@/utils/formatters'
 
 const companies = ref<Empresa[]>([])
 const loading = ref(true)
 const searchQuery = ref('')
+const perPage = ref(10)
 const showFormModal = ref(false)
 const selectedCompany = ref<Empresa | null>(null)
+
+const companyColumns = [
+  { key: 'nome', label: 'Razão Social / Fantasia', bold: true },
+  { key: 'cnpj', label: 'CNPJ', responsive: 'cnpj', formatter: (v: string) => formatarCNPJ(v) },
+  { key: 'email', label: 'E-mail Comercial', responsive: 'email' },
+  { key: 'responsavel', label: 'Responsável / Contato' },
+  { key: 'status', label: 'Status', responsive: 'status-desc' },
+  { key: 'actions', label: 'Ações' }
+]
 
 onMounted(loadCompanies)
 
@@ -153,6 +140,4 @@ async function deleteCompany(company: Empresa) {
 }
 </script>
 
-<style scoped>
-@import "./css/CompaniesView.css";
-</style>
+

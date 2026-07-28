@@ -559,6 +559,22 @@ code {
   transform: translateY(-1px);
 }
 
+.btn-success {
+  background-color: var(--success);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+}
+
 .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
@@ -604,6 +620,19 @@ code {
 }
 
 .card:hover {
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+/* ============================================================================
+   GLOBAL STYLES: CARDS & TABLE CONTAINERS
+   ============================================================================ */
+
+/* Table wrapper card (used by all list views) */
+.table-card {
+  overflow: hidden;
+}
+
+.table-card:hover {
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
 }
 
@@ -781,12 +810,18 @@ code {
   font-size: 0.95rem;
 }
 
+.text-muted-small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .filter-header {
   display: flex;
   gap: 16px;
   align-items: center;
   margin-bottom: 20px;
   flex-wrap: wrap;
+  padding: 16px 24px 8px;
 }
 
 .filter-field {
@@ -832,6 +867,7 @@ table.data-table th {
   color: var(--text-muted);
   border-bottom: 2px solid #e2e8f0;
   background-color: #ffffff;
+  letter-spacing: 0.03em;
 }
 
 table.data-table td {
@@ -843,7 +879,17 @@ table.data-table td {
 }
 
 table.data-table tr:hover td {
-  background-color: #fafbfd;
+  background-color: #f8fafc;
+}
+
+table.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Smaller variant for settings/crud tables */
+table.data-table.crud-table td {
+  padding: 12px 16px;
+  font-size: 0.85rem;
 }
 
 .no-data-placeholder {

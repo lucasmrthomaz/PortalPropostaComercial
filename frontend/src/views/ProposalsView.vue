@@ -10,114 +10,91 @@
       </button>
     </div>
 
-    <!-- Filters Header -->
-    <div class="card table-card mat-elevation-z4">
-      <div class="filter-header">
-        <!-- Client Filter -->
-        <div class="form-group filter-field">
-          <label class="form-label">Filtrar por Cliente</label>
-          <select v-model="selectedClientFilter" class="form-control" @change="applyFilters">
-            <option value="all">Todos os clientes</option>
-            <option v-for="client in clients" :key="client.id" :value="client.id">
-              {{ client.nome }}
-            </option>
-          </select>
-        </div>
+    <!-- DataTable with filters -->
+    <DataTable
+      :columns="proposalColumns"
+      :rows="filteredProposals"
+      :loading="loading"
+      empty-icon="assignment_late"
+      empty-text="Nenhuma proposta encontrada."
+      paginate
+      :per-page="perPage"
+    >
+      <!-- Filter slot -->
+      <template #filter>
+        <FilterField
+          v-model="selectedClientFilter"
+          type="select"
+          label="Filtrar por Cliente"
+          all-label="Todos os clientes"
+          :options="clientFilterOptions"
+        />
 
-        <!-- Type Filter -->
-        <div class="form-group filter-field">
-          <label class="form-label">Filtrar por Tipo</label>
-          <select v-model="selectedTypeFilter" class="form-control" @change="applyFilters">
-            <option value="all">Todos os tipos</option>
-            <option v-for="t in proposalTypes" :key="t.id" :value="t.chave">
-              {{ t.nome }}
-            </option>
-          </select>
-        </div>
+        <FilterField
+          v-model="selectedTypeFilter"
+          type="select"
+          label="Filtrar por Tipo"
+          all-label="Todos os tipos"
+          :options="typeFilterOptions"
+        />
 
-        <!-- Status Filter -->
-        <div class="form-group filter-field">
-          <label class="form-label">Filtrar por Status</label>
-          <select v-model="selectedStatusFilter" class="form-control" @change="applyFilters">
-            <option value="all">Todos os status</option>
-            <option value="Pendente">Pendente</option>
-            <option value="Em Analise">Em Análise</option>
-            <option value="Aprovada">Aprovada</option>
-            <option value="Recusada">Recusada</option>
-          </select>
-        </div>
-      </div>
+        <FilterField
+          v-model="selectedStatusFilter"
+          type="select"
+          label="Filtrar por Status"
+          all-label="Todos os status"
+          :options="[
+            { value: 'Pendente', label: 'Pendente' },
+            { value: 'Em Analise', label: 'Em Análise' },
+            { value: 'Aprovada', label: 'Aprovada' },
+            { value: 'Recusada', label: 'Recusada' }
+          ]"
+        />
+      </template>
 
-      <div v-if="loading" class="spinner-container">
-        <div class="spinner"></div>
-      </div>
+      <!-- Custom cell: Tipo -->
+      <template #cell-tipo="{ row: p }">
+        {{ getTypeLabelFromList(p.tipo) }}
+      </template>
 
-      <div v-else class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Tipo</th>
-              <th>Valor</th>
-              <th class="col-empresa">Empresa Parceira</th>
-              <th class="col-comissao">Comissão</th>
-              <th>Status</th>
-              <th class="col-created_at">Cadastro</th>
-              <th class="actions-header" style="text-align: right;">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="p in filteredProposals" :key="p.id">
-              <td>
-                <strong>{{ getClientName(p.cliente_id) }}</strong>
-              </td>
-              <td>{{ getTypeLabel(p.tipo) }}</td>
-              <td>
-                <strong>{{ formatCurrency(p.valor) }}</strong>
-              </td>
-              <td class="col-empresa">{{ getCompanyName(p.empresa_id) }}</td>
-              <td class="col-comissao">
-                <span v-if="p.valor_comissao !== undefined">{{ formatCurrency(p.valor_comissao) }}</span>
-                <span v-else-if="p.empresa_id">{{ formatCurrency(p.valor * (globalTaxRate / 100)) }}</span>
-                <span v-else>—</span>
-              </td>
-              <td>
-                <span class="status-tag" :class="p.status.toLowerCase().replace(' ', '-')">
-                  {{ getStatusLabel(p.status) }}
-                </span>
-              </td>
-              <td class="col-created_at">{{ formatDate(p.created_at) }}</td>
-              <td class="actions-cell">
-                <div class="actions-wrapper">
-                  <button class="btn-icon" @click="viewDetails(p)" title="Ver Detalhes">
-                    <i class="material-icons">visibility</i>
-                  </button>
-                  <button class="btn-icon" @click="openFormModal(p)" title="Editar Proposta">
-                    <i class="material-icons">edit</i>
-                  </button>
-                  <button class="btn-icon btn-icon-danger" @click="confirmDelete(p)" title="Excluir Proposta">
-                    <i class="material-icons">delete</i>
-                  </button>
-                  
-                  <button v-if="p.status !== 'Aprovada' && p.status !== 'Recusada'" class="btn-icon" @click="confirmApprove(p)" title="Aprovar Proposta" style="color: var(--success);">
-                    <i class="material-icons">check_circle_outline</i>
-                  </button>
-                  <button v-if="!p.empresa_id" class="btn-icon" @click="openForwardModal(p)" title="Encaminhar para Empresa" style="color: var(--warning);">
-                    <i class="material-icons">send</i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="filteredProposals.length === 0">
-              <td colspan="8" class="no-data-placeholder">
-                <i class="material-icons">assignment_late</i>
-                <span>Nenhuma proposta encontrada.</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Custom cell: Valor -->
+      <template #cell-valor="{ row: p }">
+        <strong>{{ formatCurrency(p.valor) }}</strong>
+      </template>
+
+      <!-- Custom cell: Comissão -->
+      <template #cell-comissao="{ row: p }">
+        <span v-if="p.valor_comissao !== undefined">{{ formatCurrency(p.valor_comissao) }}</span>
+        <span v-else-if="p.empresa_id">{{ formatCurrency(p.valor * (globalTaxRate / 100)) }}</span>
+        <span v-else>—</span>
+      </template>
+
+      <!-- Custom cell: Status -->
+      <template #cell-status="{ row: p }">
+        <span class="status-tag" :class="getStatusClass(p.status)">
+          {{ getStatusLabel(p.status) }}
+        </span>
+      </template>
+
+      <!-- Actions slot -->
+      <template #actions="{ row: p }">
+        <button class="btn-icon" @click="viewDetails(p)" title="Ver Detalhes">
+          <i class="material-icons">visibility</i>
+        </button>
+        <button class="btn-icon" @click="openFormModal(p)" title="Editar Proposta">
+          <i class="material-icons">edit</i>
+        </button>
+        <button class="btn-icon btn-icon-danger" @click="confirmDelete(p)" title="Excluir Proposta">
+          <i class="material-icons">delete</i>
+        </button>
+        <button v-if="p.status !== 'Aprovada' && p.status !== 'Recusada'" class="btn-icon" @click="confirmApprove(p)" title="Aprovar Proposta" style="color: var(--success);">
+          <i class="material-icons">check_circle_outline</i>
+        </button>
+        <button v-if="!p.empresa_id" class="btn-icon" @click="openForwardModal(p)" title="Encaminhar para Empresa" style="color: var(--warning);">
+          <i class="material-icons">send</i>
+        </button>
+      </template>
+    </DataTable>
 
     <!-- Modals -->
     <ProposalFormModal
@@ -157,6 +134,9 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Proposta, Cliente, Empresa, TipoProposta } from '@/types'
 import { api } from '@/services/api'
+import { formatCurrency, formatDate, getStatusLabel, getStatusClass, getTypeLabel } from '@/composables/useFormatting'
+import DataTable from '@/components/DataTable.vue'
+import FilterField from '@/components/FilterField.vue'
 import ProposalFormModal from '@/components/ProposalFormModal.vue'
 import ProposalDetailsModal from '@/components/ProposalDetailsModal.vue'
 import ForwardProposalModal from '@/components/ForwardProposalModal.vue'
@@ -170,11 +150,20 @@ const companies = ref<Empresa[]>([])
 const proposalTypes = ref<TipoProposta[]>([])
 const loading = ref(true)
 const globalTaxRate = ref(5.0)
+const perPage = ref(10)
 
 // Filters
 const selectedClientFilter = ref('all')
 const selectedTypeFilter = ref('all')
 const selectedStatusFilter = ref('all')
+
+const clientFilterOptions = computed(() =>
+  clients.value.map(c => ({ value: c.id!, label: c.nome }))
+)
+
+const typeFilterOptions = computed(() =>
+  proposalTypes.value.map(t => ({ value: t.chave, label: t.nome }))
+)
 
 // Modals
 const showFormModal = ref(false)
@@ -261,9 +250,16 @@ async function loadProposals() {
   }
 }
 
-function applyFilters() {
-  // handled reactively by computed
-}
+const proposalColumns = [
+  { key: 'cliente_id', label: 'Cliente', bold: true, formatter: (v: string) => getClientName(v) },
+  { key: 'tipo', label: 'Tipo' },
+  { key: 'valor', label: 'Valor', formatter: (v: number) => formatCurrency(v) },
+  { key: 'empresa_id', label: 'Empresa Parceira', responsive: 'empresa', formatter: (v: string) => getCompanyName(v) },
+  { key: 'comissao', label: 'Comissão', responsive: 'comissao' },
+  { key: 'status', label: 'Status' },
+  { key: 'created_at', label: 'Cadastro', responsive: 'created_at', formatter: (v: string) => formatDate(v) },
+  { key: 'actions', label: 'Ações' }
+]
 
 const filteredProposals = computed(() => {
   let list = proposals.value
@@ -292,30 +288,8 @@ function getCompanyName(id?: string): string {
   return found ? found.nome : '—'
 }
 
-function getTypeLabel(tipo: string): string {
-  const found = proposalTypes.value.find(t => t.chave === tipo)
-  return found ? found.nome : tipo
-}
-
-function getStatusLabel(status: string): string {
-  switch (status) {
-    case 'Pendente': return 'Pendente'
-    case 'Aprovada': return 'Aprovada'
-    case 'Recusada': return 'Recusada'
-    case 'Em Analise': return 'Em Análise'
-    default: return status
-  }
-}
-
-function formatCurrency(val: number): string {
-  if (val === undefined || val === null) return 'R$ 0,00'
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
-}
-
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return '—'
-  const date = new Date(dateStr)
-  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)
+function getTypeLabelFromList(tipo: string): string {
+  return getTypeLabel(tipo, proposalTypes.value)
 }
 
 function openFormModal(proposal: any) {
@@ -438,6 +412,4 @@ function onSupervisorSubmitted() {
 }
 </script>
 
-<style scoped>
-@import "./css/ProposalsView.css";
-</style>
+

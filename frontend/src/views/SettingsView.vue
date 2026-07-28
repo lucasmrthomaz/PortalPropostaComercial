@@ -87,9 +87,17 @@
             <h2>Tipos de Proposta</h2>
             <p>Configure e crie tipos de proposta comercial e gerencie seus campos dinâmicos.</p>
           </div>
-          <button class="btn btn-primary" @click="openTypeForm(null)">
-            <i class="material-icons">add</i> Criar Novo Tipo
-          </button>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <FilterField
+              v-model="typeSearch"
+              type="search"
+              placeholder="Buscar tipo..."
+              style="width: 200px;"
+            />
+            <button class="btn btn-primary" @click="openTypeForm(null)">
+              <i class="material-icons">add</i> Criar Novo Tipo
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -103,7 +111,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="t in proposalTypes" :key="t.id">
+              <tr v-for="t in filteredTypes" :key="t.id">
                 <td>
                   <strong>{{ t.nome }}</strong>
                   <span class="system-badge" v-if="isSystemType(t.chave)">Sistema</span>
@@ -145,9 +153,17 @@
             <h2>Empresas Parceiras</h2>
             <p>Cadastre e gerencie as empresas parceiras que recebem o encaminhamento de propostas.</p>
           </div>
-          <button class="btn btn-primary" @click="openCompanyForm(null)">
-            <i class="material-icons">add</i> Nova Empresa
-          </button>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <FilterField
+              v-model="companySearch"
+              type="search"
+              placeholder="Buscar empresa..."
+              style="width: 200px;"
+            />
+            <button class="btn btn-primary" @click="openCompanyForm(null)">
+              <i class="material-icons">add</i> Nova Empresa
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -163,7 +179,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="c in companies" :key="c.id">
+              <tr v-for="c in filteredCompanies" :key="c.id">
                 <td><strong>{{ c.nome }}</strong></td>
                 <td class="col-cnpj"><code>{{ formatarCNPJ(c.cnpj) }}</code></td>
                 <td class="col-email">{{ c.email }}</td>
@@ -211,9 +227,17 @@
             <h2>Perfis de Acesso</h2>
             <p>Crie e configure perfis de acesso com permissões granulares para cada módulo do sistema.</p>
           </div>
-          <button class="btn btn-primary" @click="openProfileForm(null)">
-            <i class="material-icons">add</i> Criar Novo Perfil
-          </button>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <FilterField
+              v-model="profileSearch"
+              type="search"
+              placeholder="Buscar perfil..."
+              style="width: 200px;"
+            />
+            <button class="btn btn-primary" @click="openProfileForm(null)">
+              <i class="material-icons">add</i> Criar Novo Perfil
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -227,7 +251,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="p in profiles" :key="p.id">
+              <tr v-for="p in filteredProfiles" :key="p.id">
                 <td>
                   <strong>{{ p.nome }}</strong>
                   <span class="system-badge" v-if="p.is_sistema">Sistema</span>
@@ -273,9 +297,17 @@
             <h2>Usuários</h2>
             <p>Gerencie os usuários do sistema e seus perfis de acesso.</p>
           </div>
-          <button class="btn btn-primary" @click="openUserForm(null)">
-            <i class="material-icons">person_add</i> Novo Usuário
-          </button>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <FilterField
+              v-model="userSearch"
+              type="search"
+              placeholder="Buscar usuário..."
+              style="width: 200px;"
+            />
+            <button class="btn btn-primary" @click="openUserForm(null)">
+              <i class="material-icons">person_add</i> Novo Usuário
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -290,7 +322,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="u in users" :key="u.id">
+              <tr v-for="u in filteredUsers" :key="u.id">
                 <td>
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <div class="user-avatar-sm">{{ u.nome.charAt(0).toUpperCase() }}</div>
@@ -359,9 +391,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { TipoProposta, Empresa, Perfil, Usuario, Settings, CampoTipoProposta } from '@/types'
 import { api } from '@/services/api'
+import FilterField from '@/components/FilterField.vue'
 import ProposalTypeFormModal from '@/components/ProposalTypeFormModal.vue'
 import CompanyFormModal from '@/components/CompanyFormModal.vue'
 import ProfileFormModal from '@/components/ProfileFormModal.vue'
@@ -382,6 +415,50 @@ const proposalTypes = ref<TipoProposta[]>([])
 const companies = ref<Empresa[]>([])
 const profiles = ref<Perfil[]>([])
 const users = ref<Usuario[]>([])
+
+// Search state for each table
+const typeSearch = ref('')
+const companySearch = ref('')
+const profileSearch = ref('')
+const userSearch = ref('')
+
+// Filtered computed lists
+const filteredTypes = computed(() => {
+  const q = typeSearch.value.toLowerCase().trim()
+  if (!q) return proposalTypes.value
+  return proposalTypes.value.filter(t =>
+    t.nome.toLowerCase().includes(q) ||
+    t.chave.toLowerCase().includes(q)
+  )
+})
+
+const filteredCompanies = computed(() => {
+  const q = companySearch.value.toLowerCase().trim()
+  if (!q) return companies.value
+  return companies.value.filter(c =>
+    c.nome.toLowerCase().includes(q) ||
+    c.cnpj.toLowerCase().includes(q) ||
+    c.email.toLowerCase().includes(q)
+  )
+})
+
+const filteredProfiles = computed(() => {
+  const q = profileSearch.value.toLowerCase().trim()
+  if (!q) return profiles.value
+  return profiles.value.filter(p =>
+    p.nome.toLowerCase().includes(q) ||
+    (p.descricao || '').toLowerCase().includes(q)
+  )
+})
+
+const filteredUsers = computed(() => {
+  const q = userSearch.value.toLowerCase().trim()
+  if (!q) return users.value
+  return users.value.filter(u =>
+    u.nome.toLowerCase().includes(q) ||
+    u.email.toLowerCase().includes(q)
+  )
+})
 
 // Modal states
 const showTypeModal = ref(false)

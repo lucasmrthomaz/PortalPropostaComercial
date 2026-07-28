@@ -1,65 +1,137 @@
-# Cadastro de Clientes e Propostas Comerciais
+# Portal de Propostas Comerciais
 
-Esta é uma aplicação completa e moderna com a separação correta entre **Backend em Go** e **Frontend em Angular 18+ com Angular Material**, utilizando **SQLite** como banco de dados fallback local.
+Sistema completo de gestão de propostas comerciais com cadastro de clientes, propostas por tipo (Imobiliária, Automotiva, Diversas) e dashboard de métricas.
 
----
-
-## 🏗️ Estrutura do Projeto
-
-O projeto é dividido em dois diretórios principais:
-
-- `/backend`: API RESTful construída em Go seguindo o padrão Clean Architecture, utilizando `go-chi` para rotas, `GORM` como ORM, e o driver SQLite puramente em Go (sem CGO) para máxima portabilidade em ambientes Windows.
-- `/frontend`: Aplicação SPA construída em Angular 18+, utilizando Angular Material para interface visual responsiva e moderna, formulários dinâmicos com validação para diferentes tipos de propostas comerciais (Imobiliária, Auto e Compra/Venda Diversas) e Dashboard de métricas.
+O projeto está dividido entre um backend construído em **.NET 10**, uma aplicação web frontend construída em **Vue 3** com TypeScript, e um aplicativo móvel/desktop em **Flutter**.
 
 ---
 
-## ⚡ Como Executar Localmente
+## 🚀 Funcionalidades
+
+- **Cadastro de Clientes** com validação de e-mail e CPF/CNPJ.
+- **Formulários Dinâmicos** para diferentes tipos de propostas de acordo com as configurações do sistema.
+- **Dashboard** completo com métricas, gráficos e resumos de propostas.
+- **Busca e Filtros** avançados para controle e gerenciamento.
+- **Design Responsivo** com estilo premium totalmente customizado em CSS nativo (Design System estruturado com variáveis CSS).
+
+---
+
+## 🛠️ Tecnologias
+
+### Backend
+- **.NET 10.0** (ASP.NET Core Web API)
+- **Entity Framework Core 10** com provedor **SQLite**
+- Validação e filtros globais para tratamento de exceções
+
+### Frontend Web
+- **Vue 3** (Single File Components - SFC)
+- **TypeScript**
+- **Vite** - Build tool e Servidor de Desenvolvimento
+- **Vue Router** - Gerenciamento de rotas
+- **CSS Customizado** (sem uso de frameworks CSS pesados, apenas variáveis CSS e design system limpo)
+
+### Aplicativo Mobile / Desktop (Opcional)
+- **Flutter** com Dart (Localizado na pasta `/app`)
+- Gerenciamento de estado com **Provider**
+- Integração reativa via API REST
+
+---
+
+## ⚙️ Instalação e Execução
 
 ### Pré-requisitos
-- **Go** (versão 1.22+) instalado
-- **Node.js** (versão 20+) instalado
+- .NET 10 SDK
+- Node.js 20+
+- Flutter SDK (opcional, apenas para rodar o aplicativo mobile)
 
 ---
 
-### 1. Executar o Backend (Go)
+### Execução Combinada (Windows)
 
-O backend irá inicializar automaticamente o arquivo de banco de dados SQLite local `propostas.db` e rodar as migrações necessárias ao iniciar.
+Na raiz do projeto, existe o script `run-project.bat`. Ele automatiza a compilação do backend e a inicialização de ambos os serviços:
 
-No terminal, navegue até a pasta `backend` e execute:
-
-```bash
-cd backend
-go run cmd/server/main.go
+```cmd
+run-project.bat
 ```
 
-O servidor iniciará por padrão na porta `8080` em:  
-👉 **http://localhost:8080**
+Após executar, os serviços estarão disponíveis em:
+- **Backend (API):** `http://localhost:8080`
+- **Frontend (Web):** `http://localhost:5173`
 
 ---
 
-### 2. Executar o Frontend (Angular)
+### Execução Manual
 
-O Angular está configurado com um servidor proxy local para rotear requisições `/api` diretamente para a porta `8080` do backend.
+#### 🖥️ Backend (.NET 10)
+1. Navegue até a pasta do backend:
+   ```bash
+   cd backend
+   ```
+2. Restaure as dependências e inicie o servidor:
+   ```bash
+   dotnet run
+   ```
+   *O backend escutará por padrão na porta **8080** (`http://localhost:8080`).*
 
-Em um novo terminal, na pasta raiz do projeto, execute:
+#### 🌐 Frontend (Vue 3 + Vite)
+1. Navegue até a pasta do frontend:
+   ```bash
+   cd frontend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+   *A aplicação iniciará na porta **5173** (`http://localhost:5173`) e possui proxy configurado para redirecionar chamadas `/api` automaticamente para o backend.*
 
-```bash
-cd frontend
-npm install
-npm run start
+#### 📱 Aplicativo Flutter
+1. Navegue até a pasta do aplicativo:
+   ```bash
+   cd app
+   ```
+2. Obtenha as dependências do pubspec:
+   ```bash
+   flutter pub get
+   ```
+3. Execute o aplicativo no emulador ou dispositivo conectado:
+   ```bash
+   flutter run
+   ```
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+/backend                      - API Web RESTful desenvolvida em .NET 10
+  /Controllers                - Endpoints expostos para a aplicação
+  /Data                       - Inicialização do banco SQLite via Entity Framework Core (AppDbContext)
+  /Models                     - Modelos de domínio (Clientes, Propostas, etc.)
+  /Services                   - Serviços com as regras de negócio
+  /Infrastructure             - Filtros e manipuladores globais de requisições / erros
+  Program.cs                  - Inicialização global e injeção de dependências do ASP.NET Core
+  backend.csproj              - Arquivo de configuração de projeto .NET
+
+/frontend                     - Interface Web do Portal em Vue 3 + TypeScript
+  /src/components             - Componentes modulares reutilizáveis (formulários, tabelas, modais)
+  /src/views                  - Páginas principais da aplicação web (Dashboard, Clientes, Configurações)
+  /src/services               - Camada de comunicação com a API REST
+  /src/styles                 - Variáveis e estilos globais do design system
+  vite.config.ts              - Configuração do Vite com suporte a proxy reverso para `/api`
+
+/app                          - Interface Mobile / Desktop em Flutter (Dart)
+  /lib/screens                - Telas do aplicativo organizadas por domínio
+  /lib/providers              - Gerenciamento de estado reativo
+  /lib/core                   - Configurações da aplicação e cliente HTTP (ApiClient)
 ```
 
-O servidor de desenvolvimento do Angular iniciará em:  
-👉 **http://localhost:4200**
-
 ---
 
-## 🌟 Funcionalidades e Diferenciais
+## 📝 Licença
 
-1. **Dashboard Consolidado:** Métricas em tempo real sobre o número total de clientes, propostas, valor acumulado geral, e detalhamentos estruturados por tipo de proposta e status.
-2. **Cadastro Completo de Clientes:** Validação integrada de e-mail e CPF/CNPJ diretamente no backend e no frontend.
-3. **Formulários Dinâmicos de Propostas:** Ao selecionar o tipo de proposta, o formulário se adapta exibindo os campos adequados:
-   - **Imobiliária:** Endereço do imóvel, tipo (casa, apartamento, etc.) e área em m².
-   - **Automotiva:** Marca, modelo, ano de fabricação e placa do veículo.
-   - **Compra e Venda Diversas:** Descrição livre de itens e condições de pagamento.
-4. **SQLite Zero-Config:** Conexão fallback automática para rodar localmente sem precisar de setups complexos de banco de dados.
+Este projeto é de código aberto e está disponível sob a licença MIT.
+

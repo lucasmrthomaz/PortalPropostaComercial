@@ -139,6 +139,7 @@
 import { ref, onMounted } from 'vue'
 import { DashboardStats } from '@/types'
 import { api } from '@/services/api'
+import { formatCurrency, getStatusLabel, getTypeLabel } from '@/composables/useFormatting'
 
 const stats = ref<DashboardStats | null>(null)
 const loading = ref(true)
@@ -152,30 +153,6 @@ onMounted(async () => {
     loading.value = false
   }
 })
-
-function formatCurrency(val: number): string {
-  if (val === undefined || val === null) return 'R$ 0,00'
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
-}
-
-function getStatusLabel(status: string): string {
-  switch (status) {
-    case 'Pendente': return 'Pendente'
-    case 'Aprovada': return 'Aprovada'
-    case 'Recusada': return 'Recusada'
-    case 'Em Analise': return 'Em Análise'
-    default: return status
-  }
-}
-
-function getTypeLabel(tipo: string): string {
-  switch (tipo) {
-    case 'Imobiliaria': return 'Imobiliária'
-    case 'Auto': return 'Automotiva'
-    case 'Comissionados': return 'Comissionados (PVA)'
-    default: return tipo
-  }
-}
 </script>
 
 <style scoped>

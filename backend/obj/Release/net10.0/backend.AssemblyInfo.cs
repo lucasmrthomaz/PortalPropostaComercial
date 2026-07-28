@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PortalProposta")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15c11bb85fd934917636c5752905e7c82285e435")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45bfd851743954cf69b96f9b29cf76ea01809a2c")]
 [assembly: System.Reflection.AssemblyProductAttribute("PortalProposta")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PortalProposta")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

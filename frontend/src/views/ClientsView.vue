@@ -10,70 +10,41 @@
       </button>
     </div>
 
-    <!-- Filter Header -->
-    <div class="card table-card mat-elevation-z4">
-      <div class="filter-header">
-        <div class="input-with-icon filter-field">
-          <i class="material-icons icon-prefix">search</i>
-          <input
-            type="text"
-            v-model="searchQuery"
-            class="form-control"
-            placeholder="Buscar Cliente (Nome, CPF/CNPJ...)"
-          />
-        </div>
-      </div>
+    <!-- DataTable with filter -->
+    <DataTable
+      :columns="clientColumns"
+      :rows="filteredClients"
+      :loading="loading"
+      empty-icon="people_outline"
+      empty-text="Nenhum cliente cadastrado ou encontrado."
+      paginate
+      :per-page="perPage"
+    >
+      <!-- Filter slot -->
+      <template #filter>
+        <FilterField
+          v-model="searchQuery"
+          type="search"
+          placeholder="Buscar Cliente (Nome, CPF/CNPJ...)"
+        />
+      </template>
 
-      <div v-if="loading" class="spinner-container">
-        <div class="spinner"></div>
-      </div>
-
-      <div v-else class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nome Completo</th>
-              <th class="col-cpf_cnpj">CPF / CNPJ</th>
-              <th class="col-email">E-mail</th>
-              <th class="col-telefone">Telefone</th>
-              <th class="actions-header" style="text-align: right;">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="client in filteredClients" :key="client.id">
-              <td>
-                <strong>{{ client.nome }}</strong>
-              </td>
-              <td class="col-cpf_cnpj">{{ formatarCpfCnpj(client.cpf_cnpj) }}</td>
-              <td class="col-email">{{ client.email }}</td>
-              <td class="col-telefone">{{ formatarTelefone(client.telefone) || '—' }}</td>
-              <td class="actions-cell">
-                <div class="actions-wrapper">
-                  <button class="btn-icon" @click="openFormModal(client)" title="Editar Cliente">
-                    <i class="material-icons">edit</i>
-                  </button>
-                  <button class="btn-icon btn-icon-danger" @click="confirmDeleteClient(client)" title="Excluir Cliente">
-                    <i class="material-icons">delete</i>
-                  </button>
-                  <button class="btn-icon" @click="openNewProposal(client)" title="Nova Proposta" style="color: var(--primary);">
-                    <i class="material-icons">add_box</i>
-                  </button>
-                  <button class="btn-icon" @click="viewProposals(client)" title="Ver Propostas" style="color: var(--secondary);">
-                    <i class="material-icons">assignment</i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="filteredClients.length === 0">
-              <td colspan="5" class="no-data-placeholder">
-                <i class="material-icons">people_outline</i>
-                <span>Nenhum cliente cadastrado ou encontrado.</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Actions slot -->
+      <template #actions="{ row: client }">
+        <button class="btn-icon" @click="openFormModal(client)" title="Editar Cliente">
+          <i class="material-icons">edit</i>
+        </button>
+        <button class="btn-icon btn-icon-danger" @click="confirmDeleteClient(client)" title="Excluir Cliente">
+          <i class="material-icons">delete</i>
+        </button>
+        <button class="btn-icon" @click="openNewProposal(client)" title="Nova Proposta" style="color: var(--primary);">
+          <i class="material-icons">add_box</i>
+        </button>
+        <button class="btn-icon" @click="viewProposals(client)" title="Ver Propostas" style="color: var(--secondary);">
+          <i class="material-icons">assignment</i>
+        </button>
+      </template>
+    </DataTable>
 
     <!-- Modals -->
     <ClientFormModal
@@ -107,6 +78,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Cliente } from '@/types'
 import { api } from '@/services/api'
+import DataTable from '@/components/DataTable.vue'
+import FilterField from '@/components/FilterField.vue'
 import ClientFormModal from '@/components/ClientFormModal.vue'
 import ProposalFormModal from '@/components/ProposalFormModal.vue'
 import SupervisorDialog from '@/components/SupervisorDialog.vue'
@@ -117,6 +90,7 @@ const router = useRouter()
 const clients = ref<Cliente[]>([])
 const loading = ref(true)
 const searchQuery = ref('')
+const perPage = ref(10)
 
 // Modal States
 const showFormModal = ref(false)
@@ -129,6 +103,14 @@ const showDeleteModal = ref(false)
 const clientToDelete = ref<Cliente | null>(null)
 const deleteDescription = ref('')
 const deletePedido = ref<any>({})
+
+const clientColumns = [
+  { key: 'nome', label: 'Nome Completo', bold: true },
+  { key: 'cpf_cnpj', label: 'CPF / CNPJ', responsive: 'cpf_cnpj', formatter: (v: string) => formatarCpfCnpj(v) },
+  { key: 'email', label: 'E-mail', responsive: 'email' },
+  { key: 'telefone', label: 'Telefone', responsive: 'telefone', formatter: (v: string) => formatarTelefone(v) || '—' },
+  { key: 'actions', label: 'Ações' }
+]
 
 onMounted(loadClients)
 

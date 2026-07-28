@@ -7,69 +7,81 @@
       </div>
     </div>
 
-    <!-- Table Card -->
-    <div class="card table-card mat-elevation-z4">
-      <div v-if="loading" class="spinner-container">
-        <div class="spinner"></div>
-      </div>
+    <!-- DataTable -->
+    <DataTable
+      :columns="supervisorColumns"
+      :rows="filteredRequests"
+      :loading="loading"
+      empty-icon="security"
+      empty-text="Nenhuma solicitação de análise registrada no momento."
+      paginate
+      :per-page="perPage"
+    >
+      <!-- Filter slot -->
+      <template #filter>
+        <FilterField
+          v-model="searchQuery"
+          type="search"
+          placeholder="Buscar por ação ou detalhes..."
+        />
+      </template>
+      <!-- Custom cell: Ação -->
+      <template #cell-acao="{ row: req }">
+        <strong>{{ getActionLabel(req.tipo_acao) }}</strong>
+      </template>
 
-      <div v-else class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Ação Requisitada</th>
-              <th>Detalhes da Operação</th>
-              <th>Status</th>
-              <th class="col-created_at">Data / Hora</th>
-              <th class="actions-header" style="text-align: right; min-width: 220px;">Ações de Decisão</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="req in requests" :key="req.id">
-              <td>
-                <strong>{{ getActionLabel(req.tipo_acao) }}</strong>
-              </td>
-              <td>{{ req.descricao }}</td>
-              <td>
-                <span class="status-tag" :class="req.status ? req.status.toLowerCase() : 'pendente'">
-                  {{ getStatusLabel(req.status) }}
-                </span>
-              </td>
-              <td class="col-created_at">{{ formatDate(req.created_at) }}</td>
-              <td class="actions-cell">
-                <div class="actions-wrapper stack-mobile" style="justify-content: flex-end;">
-                  <template v-if="req.status === 'Pendente'">
-                    <button class="btn btn-primary btn-sm decision-btn approve" @click="approveRequest(req)">
-                      <i class="material-icons">check</i> Aprovar
-                    </button>
-                    <button class="btn btn-danger btn-sm decision-btn reject" @click="rejectRequest(req)">
-                      <i class="material-icons">close</i> Recusar
-                    </button>
-                  </template>
-                  <span v-else class="processed-text">Já processado</span>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="requests.length === 0">
-              <td colspan="5" class="no-data-placeholder">
-                <i class="material-icons">security</i>
-                <span>Nenhuma solicitação de análise registrada no momento.</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Custom cell: Status -->
+      <template #cell-status="{ row: req }">
+        <span class="status-tag" :class="req.status ? req.status.toLowerCase() : 'pendente'">
+          {{ getStatusLabel(req.status) }}
+        </span>
+      </template>
+
+      <!-- Actions slot: decision buttons -->
+      <template #actions="{ row: req }">
+        <template v-if="req.status === 'Pendente'">
+          <button class="btn btn-success btn-sm decision-btn" @click="approveRequest(req)">
+            <i class="material-icons">check</i> Aprovar
+          </button>
+          <button class="btn btn-danger btn-sm decision-btn" @click="rejectRequest(req)">
+            <i class="material-icons">close</i> Recusar
+          </button>
+        </template>
+        <span v-else class="processed-text">Já processado</span>
+      </template>
+    </DataTable>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { PedidoAnalise } from '@/types'
 import { api } from '@/services/api'
+import DataTable from '@/components/DataTable.vue'
+import FilterField from '@/components/FilterField.vue'
+import { getActionLabel, formatDateTime } from '@/composables/useFormatting'
 
 const requests = ref<PedidoAnalise[]>([])
 const loading = ref(true)
+const perPage = ref(10)
+const searchQuery = ref('')
+
+const supervisorColumns = [
+  { key: 'acao', label: 'Ação Requisitada' },
+  { key: 'descricao', label: 'Detalhes da Operação' },
+  { key: 'status', label: 'Status' },
+  { key: 'created_at', label: 'Data / Hora', responsive: 'created_at', formatter: (v: string) => formatDateTime(v) },
+  { key: 'actions', label: 'Ações de Decisão' }
+]
+
+const filteredRequests = computed(() => {
+  if (!searchQuery.value.trim()) return requests.value
+  const query = searchQuery.value.toLowerCase().trim()
+  return requests.value.filter(r =>
+    getActionLabel(r.tipo_acao).toLowerCase().includes(query) ||
+    (r.descricao || '').toLowerCase().includes(query)
+  )
+})
 
 onMounted(loadRequests)
 
@@ -112,16 +124,6 @@ async function rejectRequest(req: PedidoAnalise) {
   }
 }
 
-function getActionLabel(action: string): string {
-  switch (action) {
-    case 'DeletarCliente': return 'Excluir Cliente'
-    case 'DeletarProposta': return 'Excluir Proposta'
-    case 'AprovarProposta': return 'Aprovar Proposta'
-    case 'EncaminharEmpresa': return 'Encaminhar para Empresa'
-    default: return action
-  }
-}
-
 function getStatusLabel(status?: string): string {
   switch (status) {
     case 'Pendente': return 'Pendente'
@@ -129,12 +131,6 @@ function getStatusLabel(status?: string): string {
     case 'Recusado': return 'Recusado'
     default: return status || 'Pendente'
   }
-}
-
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date)
 }
 </script>
 
