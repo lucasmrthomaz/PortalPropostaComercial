@@ -1,3 +1,5 @@
+<img width="1639" height="867" alt="image" src="https://github.com/user-attachments/assets/72857167-6538-408d-8494-2eccdd2338a4" />
+
 # Portal de Propostas Comerciais
 
 Sistema completo de gestão de propostas comerciais com cadastro de clientes, propostas por tipo (Imobiliária, Automotiva, Diversas) e dashboard de métricas.
